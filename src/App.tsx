@@ -7,7 +7,6 @@ import { OAuthCallback } from '@/components/auth/OAuthCallback';
 import { OnboardingDialog } from '@/components/dialogs/OnboardingDialog';
 import { TermsOfService } from '@/pages/TermsOfService';
 import { PrivacyPolicy } from '@/pages/PrivacyPolicy';
-import { MojangApi } from '@/lib/io/MojangApi';
 import type { SkinFormat } from '@/lib/core/types';
 
 function EditorPage() {
@@ -22,15 +21,34 @@ function EditorPage() {
     initialize();
   }, [initialize]);
 
-  // Load skin from URL parameter
+  // Load skin from URL parameter using mc-heads.net (CORS-friendly)
   const loadSkinFromUsername = useCallback(async (username: string) => {
     setIsLoadingUserSkin(true);
     setUserSkinError(null);
 
     try {
-      const result = await MojangApi.fetchSkinByUsername(username);
-      const format: SkinFormat = result.imageData.height === 64 ? 'modern' : 'legacy';
-      loadSkin(result.imageData, format, result.model, `${username}'s Skin`);
+      // Load image with crossOrigin to avoid tainted canvas
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error(`Player "${username}" not found`));
+        img.src = `https://mc-heads.net/skin/${encodeURIComponent(username)}`;
+      });
+
+      // Use regular canvas for better CORS compatibility
+      const canvas = window.document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, img.width, img.height);
+
+      // Determine format based on dimensions
+      const format: SkinFormat = img.height === 64 ? 'modern' : 'legacy';
+
+      loadSkin(imageData, format, 'classic', `${username}'s Skin`);
 
       // Clear the user param from URL after successful load
       searchParams.delete('user');
