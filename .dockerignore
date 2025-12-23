@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Tauri (not needed for web deploy)
+src-tauri
+target
+
+# Environment files (use build args instead)
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+coverage
