@@ -15,6 +15,10 @@ import {
   Sun,
   Moon,
   Check,
+  BookOpen,
+  FileCode,
+  ScrollText,
+  Shield,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -198,6 +202,32 @@ export function MenuBar() {
                   {theme.name}
                 </DropdownMenuItem>
               ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Help Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="px-3 py-1 text-sm hover:bg-accent rounded-sm focus:outline-none">
+              Help
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-[180px]">
+              <DropdownMenuItem onClick={() => window.open('https://skin-api.kaizencore.tech/docs', '_blank')}>
+                <BookOpen className="mr-2 h-4 w-4" />
+                API Documentation
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.open('https://skin-api.kaizencore.tech/api/documentation#/', '_blank')}>
+                <FileCode className="mr-2 h-4 w-4" />
+                Swagger Documentation
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => window.open('/terms', '_blank')}>
+                <ScrollText className="mr-2 h-4 w-4" />
+                Terms of Service
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.open('/privacy', '_blank')}>
+                <Shield className="mr-2 h-4 w-4" />
+                Privacy Policy
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
