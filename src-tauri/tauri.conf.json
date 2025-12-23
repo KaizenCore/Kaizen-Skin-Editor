@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Minecraft Skin Editor",
+  "productName": "Kaizen Skin Editor",
   "version": "1.0.0",
-  "identifier": "com.minecraft.skineditor",
+  "identifier": "tech.kaizencore.skineditor",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Minecraft Skin Editor",
+        "title": "Kaizen Skin Editor",
         "width": 1400,
         "height": 900,
         "resizable": true,

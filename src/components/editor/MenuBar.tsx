@@ -81,6 +81,13 @@ export function MenuBar() {
   return (
     <>
       <div className="flex items-center h-8 px-1 border-b bg-background select-none z-50">
+        {/* Kaizen Logo */}
+        <img
+          src="/kaizen-logo.svg"
+          alt="Kaizen"
+          className="h-5 w-5 mx-2"
+        />
+
         <div className="flex items-center">
           {/* File Menu */}
           <DropdownMenu>
