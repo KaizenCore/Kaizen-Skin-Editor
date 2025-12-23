@@ -1,6 +1,5 @@
 import type { Point, RGBA, Pixel } from '../../core/types/skin';
 import type { ToolContext, ToolResult } from '../types';
-import { pixelKey } from '../types';
 import { BaseTool } from '../BaseTool';
 import { bresenhamLine, distance } from '../../utils/geometry';
 import { gradientColors } from '../../utils/color';

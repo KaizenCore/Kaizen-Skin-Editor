@@ -1,7 +1,7 @@
 import { useRef, useMemo, useEffect, useCallback, useState } from 'react';
 import * as THREE from 'three';
-import { useFrame, ThreeEvent } from '@react-three/fiber';
-import type { SkinModel, Point, BodyPartName } from '@/lib/core/types';
+import { ThreeEvent } from '@react-three/fiber';
+import type { SkinModel, Point } from '@/lib/core/types';
 import { SKIN_UV_MAP, BODY_PART_DIMENSIONS, BODY_PART_POSITIONS, OVERLAY_SCALE, type BodyPartUV } from '@/lib/core/constants';
 import type { BodyPartVisibility } from '@/stores/editorStore';
 
@@ -144,7 +144,7 @@ function BodyPart({ name, position, dimensions, uvMap, texture, isOverlay = fals
     if (!uv) return null;
 
     const faceIndex = event.faceIndex;
-    if (faceIndex === undefined) return null;
+    if (faceIndex === undefined || faceIndex === null) return null;
 
     const faceNames: (keyof BodyPartUV)[] = ['right', 'left', 'top', 'bottom', 'front', 'back'];
     const actualFaceIndex = Math.floor(faceIndex / 2);
@@ -258,14 +258,12 @@ function BodyPart({ name, position, dimensions, uvMap, texture, isOverlay = fals
 }
 
 // Pixel highlight component - shows a square with border around hovered pixel
-function PixelHighlight({ point, normal, texCoord, isOverlay, bodyPartCenter }: {
+function PixelHighlight({ point, normal, isOverlay, bodyPartCenter }: {
   point: THREE.Vector3;
   normal: THREE.Vector3;
-  texCoord: Point;
   isOverlay: boolean;
   bodyPartCenter: THREE.Vector3;
 }) {
-  const groupRef = useRef<THREE.Group>(null);
 
   // Create geometry for pixel highlight (1 unit = 1 pixel in skin space)
   const fillGeometry = useMemo(() => new THREE.PlaneGeometry(1, 1), []);
@@ -422,7 +420,6 @@ export function PlayerModel({
   onPaint,
   onPaintStart,
   onPaintEnd,
-  brushSize = 1,
   showBrushPreview = true,
   isPainting = false,
   bodyPartVisibility = defaultVisibility,
@@ -655,7 +652,6 @@ export function PlayerModel({
         <PixelHighlight
           point={hoverInfo.point}
           normal={hoverInfo.normal}
-          texCoord={hoverInfo.texCoord}
           isOverlay={hoverInfo.isOverlay}
           bodyPartCenter={hoverInfo.bodyPartCenter}
         />

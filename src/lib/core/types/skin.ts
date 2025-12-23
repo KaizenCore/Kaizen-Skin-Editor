@@ -133,7 +133,6 @@ const DEFAULT_SKIN_COLOR: RGBA = [180, 180, 180, 255];
 
 /** Steve skin image data - cached */
 let steveSkinData: ImageData | null = null;
-let steveSkinLoaded = false;
 
 /** Load Steve's skin from the PNG file */
 async function loadSteveSkinAsync(): Promise<ImageData> {
@@ -145,7 +144,6 @@ async function loadSteveSkinAsync(): Promise<ImageData> {
       ctx.drawImage(img, 0, 0);
       const imageData = ctx.getImageData(0, 0, 64, 64);
       steveSkinData = imageData;
-      steveSkinLoaded = true;
       resolve(imageData);
     };
     img.onerror = () => {
@@ -199,35 +197,7 @@ const BASE_UV_REGIONS: Array<[number, number, number, number]> = [
   [32, 52, 48, 64], // Left arm sides
 ];
 
-/**
- * OVERLAY UV regions - these stay transparent by default
- * Each region is [x1, y1, x2, y2] in pixels
- */
-const OVERLAY_UV_REGIONS: Array<[number, number, number, number]> = [
-  // === HEAD OVERLAY (row 0-16) ===
-  [40, 0, 56, 8],   // Head overlay top + bottom
-  [32, 8, 64, 16],  // Head overlay sides
-
-  // === RIGHT LEG OVERLAY (row 32-48) ===
-  [4, 32, 12, 36],  // Right leg overlay top + bottom
-  [0, 36, 16, 48],  // Right leg overlay sides
-
-  // === BODY OVERLAY (row 32-48) ===
-  [20, 32, 36, 36], // Body overlay top + bottom
-  [16, 36, 40, 48], // Body overlay sides
-
-  // === RIGHT ARM OVERLAY (row 32-48) ===
-  [44, 32, 52, 36], // Right arm overlay top + bottom
-  [40, 36, 56, 48], // Right arm overlay sides
-
-  // === LEFT LEG OVERLAY (row 48-64) ===
-  [4, 48, 12, 52],  // Left leg overlay top + bottom
-  [0, 52, 16, 64],  // Left leg overlay sides
-
-  // === LEFT ARM OVERLAY (row 48-64) ===
-  [52, 48, 60, 52], // Left arm overlay top + bottom
-  [48, 52, 64, 64], // Left arm overlay sides
-];
+// OVERLAY UV regions are defined in constants.ts for use by the renderer
 
 /** Check if a pixel is within a BASE UV region (overlays stay transparent) */
 function isBasePixel(x: number, y: number): boolean {

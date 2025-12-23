@@ -1,8 +1,7 @@
-import { Eye, EyeOff, Lock, Unlock, Plus, Trash2, Copy, ChevronUp, ChevronDown, Merge } from 'lucide-react';
+import { Eye, EyeOff, Plus, Trash2, Copy, ChevronUp, ChevronDown, Merge } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { useEditorStore } from '@/stores/editorStore';
 import { cn } from '@/lib/cn';

@@ -49,7 +49,7 @@ function buildTemplateRegions(): TemplateRegion[] {
         const [x1, y1, x2, y2] = layerUV[face];
         regions.push({
           name: `${part} ${layerType} ${face}`,
-          shortName: faceLabels[face],
+          shortName: faceLabels[face]!,
           part,
           layer: layerType,
           face,

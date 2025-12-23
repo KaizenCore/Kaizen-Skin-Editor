@@ -209,7 +209,6 @@ export function Viewer3D() {
     handleStart,
     handleMove,
     handleEnd,
-    isToolActive,
   } = useToolHandler({ viewType: '3d' });
 
   // Keyboard events for space+drag rotation

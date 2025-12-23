@@ -1,5 +1,5 @@
 import { Eye, EyeOff } from 'lucide-react';
-import { useEditorStore, type PaintTarget } from '@/stores/editorStore';
+import { useEditorStore } from '@/stores/editorStore';
 import type { BodyPartName } from '@/lib/core/types';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';

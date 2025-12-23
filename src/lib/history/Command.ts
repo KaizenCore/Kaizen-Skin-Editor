@@ -137,14 +137,14 @@ export class LayerPropertyCommand implements Command {
     if (!layer) return;
 
     this.oldValue = layer[this.property];
-    (layer as Record<string, unknown>)[this.property] = this.newValue;
+    (layer as unknown as Record<string, unknown>)[this.property] = this.newValue;
   }
 
   undo(document: SkinDocument): void {
     const layer = document.layers.find((l) => l.id === this.layerId);
     if (!layer) return;
 
-    (layer as Record<string, unknown>)[this.property] = this.oldValue;
+    (layer as unknown as Record<string, unknown>)[this.property] = this.oldValue;
   }
 
   getMemorySize(): number {

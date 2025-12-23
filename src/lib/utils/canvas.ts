@@ -69,7 +69,7 @@ export class FastImageData {
 
   /** Get raw ImageData for putImageData */
   toImageData(): ImageData {
-    return new ImageData(this.data, this.width, this.height);
+    return new ImageData(new Uint8ClampedArray(this.data), this.width, this.height);
   }
 
   /** Create from existing ImageData (clones the data) */

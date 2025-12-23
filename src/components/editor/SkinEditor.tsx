@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useEditorStore } from '@/stores/editorStore';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { steveSkinPromise } from '@/lib/core/types';
@@ -13,7 +13,6 @@ import '@/lib/tools';
 
 export function SkinEditor() {
   const { document, newDocument, activeTool } = useEditorStore();
-  const [skinLoaded, setSkinLoaded] = useState(false);
 
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -21,7 +20,6 @@ export function SkinEditor() {
   // Wait for Steve skin to load, then create default document
   useEffect(() => {
     steveSkinPromise.then(() => {
-      setSkinLoaded(true);
       if (!document) {
         newDocument({ name: 'New Skin', format: 'modern', model: 'classic' });
       }
