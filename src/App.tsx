@@ -119,6 +119,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<EditorPage />} />
+        <Route path="/oauth/callback" element={<EditorPage />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
       </Routes>
