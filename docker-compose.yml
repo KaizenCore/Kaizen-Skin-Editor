@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  kaizen-skin-editor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_KAIZEN_CLIENT_ID=${VITE_KAIZEN_CLIENT_ID}
+        - VITE_KAIZEN_BASE_URL=${VITE_KAIZEN_BASE_URL:-https://kaizencore.tech}
+        - VITE_KAIZEN_REDIRECT_URI=${VITE_KAIZEN_REDIRECT_URI}
+        - VITE_SKIN_API_URL=${VITE_SKIN_API_URL:-https://skin-api.kaizencore.tech/api/v1}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.skin-editor.rule=Host(`skin-editor.kaizencore.tech`)"
+      - "traefik.http.routers.skin-editor.entrypoints=websecure"
+      - "traefik.http.routers.skin-editor.tls.certresolver=letsencrypt"
+      - "traefik.http.services.skin-editor.loadbalancer.server.port=80"
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
