@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Theme colors - dynamically set by themeStore */
+  /* These are fallback values for Kaizen Miel Doux (dark mode) */
+  :root {
+    --background: 49 20% 16%;
+    --foreground: 40 57% 79%;
+    --card: 39 33% 24%;
+    --card-foreground: 40 57% 79%;
+    --popover: 39 33% 24%;
+    --popover-foreground: 40 57% 79%;
+    --primary: 39 44% 64%;
+    --primary-foreground: 49 20% 16%;
+    --secondary: 40 33% 32%;
+    --secondary-foreground: 40 57% 79%;
+    --muted: 40 33% 32%;
+    --muted-foreground: 39 44% 72%;
+    --accent: 39 43% 67%;
+    --accent-foreground: 49 20% 16%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 40 57% 79%;
+    --border: 40 33% 32%;
+    --input: 40 33% 32%;
+    --ring: 39 44% 64%;
+    --radius: 0.5rem;
+    /* Viewer colors */
+    --viewer-2d-bg: #312E21;
+    --viewer-2d-bg-alt: #2a2719;
+    --viewer-3d-bg: #504228;
+    --viewer-3d-floor: #312E21;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Prevent text selection during drawing */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Canvas cursor styles */
+.cursor-pencil {
+  cursor: crosshair;
+}
+
+.cursor-eraser {
+  cursor: cell;
+}
+
+.cursor-eyedropper {
+  cursor: crosshair;
+}
+
+.cursor-fill {
+  cursor: cell;
+}
+
+.cursor-move {
+  cursor: grab;
+}
+
+.cursor-move:active {
+  cursor: grabbing;
+}
