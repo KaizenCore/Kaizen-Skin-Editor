@@ -74,31 +74,31 @@ export function OnboardingDialog() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <Sparkles className="h-6 w-6 text-primary" />
-                Bienvenue dans Kaizen Skin Editor
+                Welcome to Kaizen Skin Editor
               </DialogTitle>
               <DialogDescription>
-                Choisis ton thème préféré pour personnaliser ton expérience
+                Choose your favorite theme to customize your experience
               </DialogDescription>
             </DialogHeader>
 
             <div className="py-4 space-y-4">
               {/* Dark/Light Mode Toggle */}
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <span className="font-medium">Mode d'affichage</span>
+                <span className="font-medium">Display Mode</span>
                 <div className="flex gap-2">
                   <Button
                     variant={!isDarkMode ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => isDarkMode && toggleDarkMode()}
                   >
-                    Clair
+                    Light
                   </Button>
                   <Button
                     variant={isDarkMode ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => !isDarkMode && toggleDarkMode()}
                   >
-                    Sombre
+                    Dark
                   </Button>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export function OnboardingDialog() {
 
             <DialogFooter>
               <Button onClick={handleNext} className="gap-2">
-                Continuer
+                Continue
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </DialogFooter>
@@ -166,10 +166,10 @@ export function OnboardingDialog() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <Rocket className="h-6 w-6 text-primary" />
-                Pourquoi créer un compte Kaizen ?
+                Why create a Kaizen account?
               </DialogTitle>
               <DialogDescription>
-                Un compte Kaizen te donne accès à tout l'écosystème Kaizen Core
+                A Kaizen account gives you access to the entire Kaizen Core ecosystem
               </DialogDescription>
             </DialogHeader>
 
@@ -183,10 +183,10 @@ export function OnboardingDialog() {
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold">Sauvegarde Cloud</h4>
+                    <h4 className="font-semibold">Cloud Backup</h4>
                     <p className="text-sm text-muted-foreground">
-                      Sauvegarde tes skins dans le cloud et accède-y depuis n'importe où.
-                      Partage-les facilement avec la communauté.
+                      Save your skins in the cloud and access them from anywhere.
+                      Share them easily with the community.
                     </p>
                   </div>
                 </div>
@@ -200,8 +200,8 @@ export function OnboardingDialog() {
                   <div>
                     <h4 className="font-semibold">Kaizen Launcher</h4>
                     <p className="text-sm text-muted-foreground">
-                      Accède au launcher Minecraft officiel de Kaizen avec tes mods préférés,
-                      configurations optimisées et mises à jour automatiques.
+                      Access the official Kaizen Minecraft launcher with your favorite mods,
+                      optimized configurations, and automatic updates.
                     </p>
                   </div>
                 </div>
@@ -213,10 +213,10 @@ export function OnboardingDialog() {
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold">Tools Minecraft</h4>
+                    <h4 className="font-semibold">Minecraft Tools</h4>
                     <p className="text-sm text-muted-foreground">
-                      Accède à une suite complète d'outils : calculateurs de crafts,
-                      planificateurs de builds, générateurs de commandes, et plus encore.
+                      Access a complete suite of tools: crafting calculators,
+                      build planners, command generators, and much more.
                     </p>
                   </div>
                 </div>
@@ -228,10 +228,10 @@ export function OnboardingDialog() {
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold">Communauté Kaizen</h4>
+                    <h4 className="font-semibold">Kaizen Community</h4>
                     <p className="text-sm text-muted-foreground">
-                      Rejoins une communauté de passionnés Minecraft. Partage tes créations,
-                      découvre des skins, et participe aux événements.
+                      Join a community of passionate Minecraft players. Share your creations,
+                      discover skins, and participate in events.
                     </p>
                   </div>
                 </div>
@@ -242,17 +242,17 @@ export function OnboardingDialog() {
                 <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-center">
                   <Check className="h-6 w-6 text-green-500 mx-auto mb-2" />
                   <p className="font-medium text-green-600 dark:text-green-400">
-                    Tu es déjà connecté à ton compte Kaizen !
+                    You're already connected to your Kaizen account!
                   </p>
                 </div>
               ) : (
                 <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 text-center">
                   <p className="text-sm text-muted-foreground mb-3">
-                    Connecte-toi ou crée un compte pour débloquer toutes les fonctionnalités
+                    Sign in or create an account to unlock all features
                   </p>
                   <Button onClick={handleLoginAndComplete} className="gap-2">
                     <Rocket className="h-4 w-4" />
-                    Se connecter avec Kaizen
+                    Sign in with Kaizen
                   </Button>
                 </div>
               )}
@@ -261,10 +261,10 @@ export function OnboardingDialog() {
             <DialogFooter className="flex-col sm:flex-row gap-2">
               <Button variant="outline" onClick={handleBack} className="gap-2">
                 <ArrowLeft className="h-4 w-4" />
-                Retour
+                Back
               </Button>
               <Button onClick={handleComplete} className="gap-2">
-                {isAuthenticated ? 'Commencer' : 'Continuer sans compte'}
+                {isAuthenticated ? 'Get Started' : 'Continue without account'}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </DialogFooter>

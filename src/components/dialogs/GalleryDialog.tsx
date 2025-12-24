@@ -14,6 +14,7 @@ import { useEditorStore } from '@/stores/editorStore';
 import { useAuthStore } from '@/stores/authStore';
 import { SkinApi, type Skin } from '@/lib/io/SkinApi';
 import { EditSkinDialog } from './EditSkinDialog';
+import { toast } from '@/lib/toast';
 
 interface GalleryDialogProps {
   open: boolean;
@@ -102,9 +103,12 @@ export function GalleryDialog({ open, onOpenChange }: GalleryDialogProps) {
       const format = bitmap.height === 64 ? 'modern' : 'legacy';
 
       loadSkin(imageData, format, 'classic', skin.name, skin);
+      toast.success('Skin loaded', `Loaded "${skin.name}" from gallery`);
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load skin');
+      const message = err instanceof Error ? err.message : 'Failed to load skin';
+      setError(message);
+      toast.error('Failed to load skin', message);
     } finally {
       setLoadingSkinId(null);
     }

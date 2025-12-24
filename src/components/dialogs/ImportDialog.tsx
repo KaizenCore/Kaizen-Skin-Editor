@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useEditorStore } from '@/stores/editorStore';
 import { PngCodec, MojangApi } from '@/lib/io';
+import { toast } from '@/lib/toast';
 
 interface ImportDialogProps {
   open: boolean;
@@ -37,9 +38,12 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       try {
         const { imageData, format, model } = await PngCodec.loadFromFile(file);
         loadSkin(imageData, format, model, file.name.replace('.png', ''));
+        toast.success('Skin imported', `Loaded ${file.name}`);
         onOpenChange(false);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load skin');
+        const message = err instanceof Error ? err.message : 'Failed to load skin';
+        setError(message);
+        toast.error('Import failed', message);
       } finally {
         setIsLoading(false);
         if (fileInputRef.current) {
@@ -59,9 +63,12 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
     try {
       const { imageData, model } = await MojangApi.fetchSkinByUsername(username.trim());
       loadSkin(imageData, 'modern', model, username.trim());
+      toast.success('Skin imported', `Loaded skin for ${username.trim()}`);
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch skin');
+      const message = err instanceof Error ? err.message : 'Failed to fetch skin';
+      setError(message);
+      toast.error('Import failed', message);
     } finally {
       setIsLoading(false);
     }

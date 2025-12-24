@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { useEditorStore } from '@/stores/editorStore';
 import { useAuthStore } from '@/stores/authStore';
 import { SkinApi, type SkinVisibility, type SkinCategory } from '@/lib/io/SkinApi';
+import { toast } from '@/lib/toast';
 
 interface UploadDialogProps {
   open: boolean;
@@ -93,6 +94,7 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
       });
 
       setSuccess(`Skin "${skin.name}" uploaded successfully!`);
+      toast.success('Skin uploaded', `"${skin.name}" uploaded successfully`);
 
       // Close after a short delay
       setTimeout(() => {
@@ -105,11 +107,9 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
         setSelectedCategories([]);
       }, 1500);
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Upload failed');
-      }
+      const message = err instanceof Error ? err.message : 'Upload failed';
+      setError(message);
+      toast.error('Upload failed', message);
     } finally {
       setIsUploading(false);
     }

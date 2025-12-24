@@ -35,10 +35,10 @@ export interface Theme {
   dark: ThemeColors;
 }
 
-// Kaizen Core - Miel Doux (Sweet Honey) - Default theme
+// Kaizen Core - Sweet Honey - Default theme
 const kaizenMielDoux: Theme = {
   id: 'kaizen-miel-doux',
-  name: 'Kaizen Miel Doux',
+  name: 'Kaizen Sweet Honey',
   light: {
     background: '40 57% 79%',
     foreground: '49 20% 16%',
@@ -427,10 +427,10 @@ const catppuccinLatte: Theme = {
   },
 };
 
-// Catppuccin Frappé
+// Catppuccin Frappe
 const catppuccinFrappe: Theme = {
   id: 'catppuccin-frappe',
-  name: 'Catppuccin Frappé',
+  name: 'Catppuccin Frappe',
   light: {
     background: '220 23% 95%',
     foreground: '234 16% 35%',

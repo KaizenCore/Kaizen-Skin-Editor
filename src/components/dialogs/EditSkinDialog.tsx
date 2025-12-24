@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SkinApi, type Skin, type SkinVisibility } from '@/lib/io/SkinApi';
+import { toast } from '@/lib/toast';
 
 interface EditSkinDialogProps {
   skin: Skin | null;
@@ -74,10 +75,13 @@ export function EditSkinDialog({ skin, open, onOpenChange, onSaved, onDeleted }:
         tags: tags.length > 0 ? tags : undefined,
       });
 
+      toast.success('Skin updated', `"${name.trim()}" has been updated`);
       onSaved?.();
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save');
+      const message = err instanceof Error ? err.message : 'Failed to save';
+      setError(message);
+      toast.error('Update failed', message);
     } finally {
       setIsSaving(false);
     }
@@ -91,10 +95,13 @@ export function EditSkinDialog({ skin, open, onOpenChange, onSaved, onDeleted }:
 
     try {
       await SkinApi.deleteSkin(skin.id);
+      toast.success('Skin deleted', `"${skin.name}" has been deleted`);
       onDeleted?.();
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete');
+      const message = err instanceof Error ? err.message : 'Failed to delete';
+      setError(message);
+      toast.error('Delete failed', message);
     } finally {
       setIsDeleting(false);
       setShowDeleteConfirm(false);

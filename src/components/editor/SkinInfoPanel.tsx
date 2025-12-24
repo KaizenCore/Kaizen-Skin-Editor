@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEditorStore } from '@/stores/editorStore';
 import { SkinApi, type SkinVisibility } from '@/lib/io/SkinApi';
+import { toast } from '@/lib/toast';
 
 const visibilityOptions: { value: SkinVisibility; label: string; icon: React.ReactNode }[] = [
   { value: 'public', label: 'Public', icon: <Globe className="h-3 w-3" /> },
@@ -77,8 +78,11 @@ export function SkinInfoPanel() {
 
       setSourceSkin(updatedSkin);
       setSuccess('Skin updated!');
+      toast.success('Skin updated', 'Your changes have been saved');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update');
+      const message = err instanceof Error ? err.message : 'Failed to update';
+      setError(message);
+      toast.error('Update failed', message);
     } finally {
       setIsSaving(false);
     }
@@ -112,8 +116,11 @@ export function SkinInfoPanel() {
 
       setSourceSkin(newSkin);
       setSuccess('Saved as new skin!');
+      toast.success('Skin saved', 'Created as a new skin');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create');
+      const message = err instanceof Error ? err.message : 'Failed to create';
+      setError(message);
+      toast.error('Save failed', message);
     } finally {
       setIsCreatingNew(false);
     }

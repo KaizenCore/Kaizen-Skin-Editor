@@ -5,6 +5,7 @@ import {
   type KaizenUser,
   type KaizenMinecraftProfile,
 } from '@/lib/io/KaizenApi';
+import { toast } from '@/lib/toast';
 
 // Helper to extract minecraft profile from user
 function extractMinecraftProfile(user: KaizenUser | null): KaizenMinecraftProfile | null {
@@ -86,12 +87,16 @@ export const useAuthStore = create<AuthState>()(
           isLoading: false,
           minecraftProfile: extractMinecraftProfile(user),
         });
+
+        toast.success('Logged in', `Welcome back, ${user.name}!`);
       } catch (error) {
         console.error('Login error:', error);
+        const message = error instanceof Error ? error.message : 'Login failed';
         set({
-          error: error instanceof Error ? error.message : 'Login failed',
+          error: message,
           isLoading: false,
         });
+        toast.error('Login failed', message);
       }
     },
 
@@ -101,6 +106,10 @@ export const useAuthStore = create<AuthState>()(
 
       try {
         await KaizenApi.logout();
+        toast.success('Logged out', 'See you next time!');
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Logout failed';
+        toast.error('Logout failed', message);
       } finally {
         set({
           user: null,

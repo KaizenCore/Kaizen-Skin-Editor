@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useSearchParams } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { SkinEditor } from '@/components/editor/SkinEditor';
 import { useEditorStore } from '@/stores/editorStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -7,6 +8,7 @@ import { OAuthCallback } from '@/components/auth/OAuthCallback';
 import { OnboardingDialog } from '@/components/dialogs/OnboardingDialog';
 import { TermsOfService } from '@/pages/TermsOfService';
 import { PrivacyPolicy } from '@/pages/PrivacyPolicy';
+import { toast } from '@/lib/toast';
 import type { SkinFormat } from '@/lib/core/types';
 
 function EditorPage() {
@@ -53,9 +55,13 @@ function EditorPage() {
       // Clear the user param from URL after successful load
       searchParams.delete('user');
       setSearchParams(searchParams, { replace: true });
+
+      // Show success toast
+      toast.success('Skin loaded', `Loaded skin for ${username}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load skin';
       setUserSkinError(message);
+      toast.error('Failed to load skin', message);
       // Create default document on error
       newDocument({ name: 'New Skin', format: 'modern', model: 'classic' });
     } finally {
@@ -117,6 +123,7 @@ function EditorPage() {
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="bottom-right" richColors closeButton />
       <Routes>
         <Route path="/" element={<EditorPage />} />
         <Route path="/oauth/callback" element={<EditorPage />} />

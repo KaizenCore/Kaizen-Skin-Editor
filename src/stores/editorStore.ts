@@ -13,6 +13,7 @@ import type {
   BodyPartName,
 } from '@/lib/core/types';
 import type { Skin } from '@/lib/io/SkinApi';
+import { toast } from '@/lib/toast';
 
 /** Which layer type to paint on */
 export type PaintTarget = 'base' | 'overlay';
@@ -283,11 +284,15 @@ export const useEditorStore = create<EditorState>()(
 
     deleteLayer: (layerId) => {
       const { document } = get();
-      if (!document || document.layers.length <= 1) return;
+      if (!document || document.layers.length <= 1) {
+        toast.error('Cannot delete layer', 'Must have at least one layer');
+        return;
+      }
 
       const index = document.layers.findIndex((l) => l.id === layerId);
       if (index === -1) return;
 
+      const layerName = document.layers[index]?.name;
       const newLayers = document.layers.filter((l) => l.id !== layerId);
       let newActiveId = document.activeLayerId;
 
@@ -305,6 +310,7 @@ export const useEditorStore = create<EditorState>()(
 
       get().updateComposite();
       get().syncManager.emit({ type: 'full-update' });
+      toast.success('Layer deleted', layerName);
     },
 
     duplicateLayer: (layerId) => {
@@ -335,6 +341,7 @@ export const useEditorStore = create<EditorState>()(
 
       get().updateComposite();
       get().syncManager.emit({ type: 'full-update' });
+      toast.success('Layer duplicated', duplicate.name);
     },
 
     moveLayer: (layerId, direction) => {
@@ -427,7 +434,10 @@ export const useEditorStore = create<EditorState>()(
       if (!document) return;
 
       const index = document.layers.findIndex((l) => l.id === layerId);
-      if (index <= 0) return; // Can't merge bottom layer
+      if (index <= 0) {
+        toast.error('Cannot merge down', 'No layer below to merge with');
+        return;
+      }
 
       const upper = document.layers[index]!;
       const lower = document.layers[index - 1]!;
@@ -461,12 +471,14 @@ export const useEditorStore = create<EditorState>()(
 
       get().updateComposite();
       get().syncManager.emit({ type: 'full-update' });
+      toast.success('Layers merged', `Merged ${upper.name} into ${lower.name}`);
     },
 
     flattenLayers: () => {
       const { document, compositeImageData } = get();
       if (!document || !compositeImageData) return;
 
+      const layerCount = document.layers.length;
       const flatLayer: Layer = {
         id: crypto.randomUUID(),
         name: 'Background',
@@ -486,6 +498,7 @@ export const useEditorStore = create<EditorState>()(
       });
 
       get().syncManager.emit({ type: 'full-update' });
+      toast.success('Layers flattened', `Merged ${layerCount} layers into one`);
     },
 
     // History actions

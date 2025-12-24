@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEditorStore } from '@/stores/editorStore';
 import { PngCodec } from '@/lib/io';
+import { toast } from '@/lib/toast';
 
 interface ExportDialogProps {
   open: boolean;
@@ -31,9 +32,12 @@ export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
 
     try {
       await PngCodec.downloadSkin(document.layers, document.format, `${filename}.png`);
+      toast.success('Skin exported', `Saved as ${filename}.png`);
       onOpenChange(false);
     } catch (err) {
       console.error('Export failed:', err);
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      toast.error('Export failed', message);
     } finally {
       setIsExporting(false);
     }
