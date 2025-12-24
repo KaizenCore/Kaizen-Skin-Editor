@@ -10,6 +10,7 @@ import {
   Layers,
   FlipHorizontal,
   FlipVertical,
+  Replace,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
@@ -23,6 +24,7 @@ const tools: { id: ToolId; icon: typeof Pencil; label: string; shortcut: string 
   { id: 'eraser', icon: Eraser, label: 'Eraser', shortcut: 'E' },
   { id: 'eyedropper', icon: Pipette, label: 'Eyedropper', shortcut: 'I' },
   { id: 'fill', icon: PaintBucket, label: 'Fill', shortcut: 'G' },
+  { id: 'color-replacement', icon: Replace, label: 'Color Replacement', shortcut: 'R' },
   { id: 'selection', icon: Square, label: 'Selection', shortcut: 'M' },
 ];
 

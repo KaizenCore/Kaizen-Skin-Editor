@@ -289,6 +289,7 @@ export function Canvas2DView() {
       gradient: 'cursor-crosshair',
       noise: 'cursor-crosshair',
       line: 'cursor-crosshair',
+      'color-replacement': 'cursor-crosshair',
     }[activeTool] ?? 'cursor-default';
   };
   const cursorClass = getCursorClass();

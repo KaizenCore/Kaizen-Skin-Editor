@@ -19,6 +19,7 @@ export { LineTool } from './tools/LineTool';
 export { GradientTool } from './tools/GradientTool';
 export { NoiseTool } from './tools/NoiseTool';
 export { SelectionTool } from './tools/SelectionTool';
+export { ColorReplacementTool } from './tools/ColorReplacementTool';
 
 // Initialize registry with all tools
 import { ToolRegistry } from './ToolRegistry';
@@ -30,6 +31,7 @@ import { LineTool } from './tools/LineTool';
 import { GradientTool } from './tools/GradientTool';
 import { NoiseTool } from './tools/NoiseTool';
 import { SelectionTool } from './tools/SelectionTool';
+import { ColorReplacementTool } from './tools/ColorReplacementTool';
 
 /**
  * Initialize the tool registry with all available tools
@@ -44,6 +46,7 @@ export function initializeTools(): void {
   ToolRegistry.register(new GradientTool());
   ToolRegistry.register(new NoiseTool());
   ToolRegistry.register(new SelectionTool());
+  ToolRegistry.register(new ColorReplacementTool());
 }
 
 // Auto-initialize on import

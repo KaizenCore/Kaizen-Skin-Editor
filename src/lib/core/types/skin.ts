@@ -90,7 +90,8 @@ export type ToolId =
   | 'selection'
   | 'gradient'
   | 'noise'
-  | 'line';
+  | 'line'
+  | 'color-replacement';
 
 
 /** Body part names */
