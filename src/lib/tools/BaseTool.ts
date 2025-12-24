@@ -105,9 +105,27 @@ export abstract class BaseTool implements Tool {
   }
 
   /**
-   * Interpolate points between last and current point using Bresenham
+   * Maximum distance for interpolation.
+   * If points are farther apart, we assume user crossed body parts in 3D view
+   * and skip interpolation to avoid drawing lines across the texture.
+   */
+  protected static readonly MAX_INTERPOLATION_DISTANCE = 8;
+
+  /**
+   * Interpolate points between last and current point using Bresenham.
+   * Returns empty array if points are too far apart (likely crossed body parts).
    */
   protected interpolatePoints(from: Point, to: Point): Point[] {
+    // Calculate euclidean distance
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // If distance is too large, skip interpolation (likely crossed body parts)
+    if (distance > BaseTool.MAX_INTERPOLATION_DISTANCE) {
+      return [to]; // Just return the destination point
+    }
+
     return bresenhamLine(from.x, from.y, to.x, to.y);
   }
 
