@@ -136,7 +136,8 @@ function BodyPart({ name, position, dimensions, uvMap, texture, isOverlay = fals
     const faceIndex = event.faceIndex;
     if (faceIndex === undefined || faceIndex === null) return null;
 
-    const faceNames: (keyof BodyPartUV)[] = ['right', 'left', 'top', 'bottom', 'front', 'back'];
+    // Must match faceOrder in createBoxUVs: +X, -X, +Y, -Y, +Z, -Z
+    const faceNames: (keyof BodyPartUV)[] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
     const actualFaceIndex = Math.floor(faceIndex / 2);
     const faceName = faceNames[actualFaceIndex];
     if (!faceName) return null;

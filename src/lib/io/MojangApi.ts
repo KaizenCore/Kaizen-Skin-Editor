@@ -1,32 +1,8 @@
 import type { SkinModel } from '../core/types';
 
-interface MojangProfile {
-  id: string;
-  name: string;
-}
-
-interface MojangTextures {
-  SKIN?: {
-    url: string;
-    metadata?: { model: 'slim' };
-  };
-  CAPE?: {
-    url: string;
-  };
-}
-
-interface MojangProfileResponse {
-  id: string;
-  name: string;
-  properties: Array<{
-    name: string;
-    value: string; // Base64 encoded
-  }>;
-}
-
 export class MojangApi {
-  private static readonly USERNAME_API = 'https://api.mojang.com/users/profiles/minecraft';
-  private static readonly PROFILE_API = 'https://sessionserver.mojang.com/session/minecraft/profile';
+  // Using mineatar.io API which provides CORS-friendly access to Minecraft skins
+  private static readonly MINEATAR_API = 'https://api.mineatar.io';
 
   /** Fetch skin by Minecraft username */
   static async fetchSkinByUsername(username: string): Promise<{
@@ -35,59 +11,43 @@ export class MojangApi {
     uuid: string;
     skinUrl: string;
   }> {
-    // Step 1: Get UUID from username
-    const profileResponse = await fetch(`${this.USERNAME_API}/${encodeURIComponent(username)}`);
+    // Use mineatar.io API to get player UUID
+    const uuidResponse = await fetch(
+      `${this.MINEATAR_API}/uuid/${encodeURIComponent(username)}`
+    );
 
-    if (!profileResponse.ok) {
-      if (profileResponse.status === 404) {
+    if (!uuidResponse.ok) {
+      if (uuidResponse.status === 404 || uuidResponse.status === 204) {
         throw new Error(`Player "${username}" not found`);
       }
-      throw new Error(`Failed to lookup player: ${profileResponse.status}`);
+      throw new Error(`Failed to lookup player: ${uuidResponse.status}`);
     }
 
-    const profile: MojangProfile = await profileResponse.json();
+    const uuidData = await uuidResponse.json();
+    const uuid = uuidData.uuid;
 
-    // Step 2: Get skin URL from UUID
-    const texturesResponse = await fetch(`${this.PROFILE_API}/${profile.id}`);
-
-    if (!texturesResponse.ok) {
-      throw new Error(`Failed to get player profile: ${texturesResponse.status}`);
+    if (!uuid) {
+      throw new Error(`Player "${username}" not found`);
     }
 
-    const fullProfile: MojangProfileResponse = await texturesResponse.json();
-
-    // Step 3: Decode textures from base64
-    const texturesProperty = fullProfile.properties.find((p) => p.name === 'textures');
-
-    if (!texturesProperty) {
-      throw new Error('Player has no skin set');
-    }
-
-    const texturesJson = atob(texturesProperty.value);
-    const textures: { textures: MojangTextures } = JSON.parse(texturesJson);
-
-    if (!textures.textures.SKIN) {
-      throw new Error('Player has no skin set');
-    }
-
-    // Step 4: Fetch and load skin image
-    const skinUrl = textures.textures.SKIN.url;
-    const model: SkinModel =
-      textures.textures.SKIN.metadata?.model === 'slim' ? 'slim' : 'classic';
-
+    // Fetch the raw skin image from mineatar.io
+    const skinUrl = `${this.MINEATAR_API}/skin/${uuid}`;
     const imageData = await this.fetchSkinImage(skinUrl);
+
+    // Determine model from skin dimensions or default to classic
+    // mineatar returns the raw skin, so we default to classic
+    // In the future, we could check the player's profile for slim/classic
+    const model: SkinModel = 'classic';
 
     return {
       imageData,
       model,
-      uuid: profile.id,
+      uuid,
       skinUrl,
     };
   }
 
   private static async fetchSkinImage(url: string): Promise<ImageData> {
-    // Fetch the skin image
-    // Note: This might have CORS issues in browser, but Tauri's HTTP plugin bypasses CORS
     const response = await fetch(url);
 
     if (!response.ok) {
