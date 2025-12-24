@@ -48,8 +48,10 @@ export function LeftSidebar() {
     setTool,
     brushSize,
     brushOpacity,
+    colorReplaceTolerance,
     setBrushSize,
     setBrushOpacity,
+    setColorReplaceTolerance,
     symmetryMode,
     setSymmetryMode,
     showGrid,
@@ -63,6 +65,7 @@ export function LeftSidebar() {
 
   const showBrushSize = BRUSH_SIZE_TOOLS.includes(activeTool);
   const showBrushOpacity = BRUSH_OPACITY_TOOLS.includes(activeTool);
+  const showTolerance = activeTool === 'color-replacement';
 
   const handleSymmetryToggle = (mode: SymmetryMode) => {
     if (symmetryMode === mode) {
@@ -106,9 +109,11 @@ export function LeftSidebar() {
         </div>
 
         {/* Brush Settings Section */}
-        {(showBrushSize || showBrushOpacity) && (
+        {(showBrushSize || showBrushOpacity || showTolerance) && (
           <div className="p-3 border-b space-y-3">
-            <h3 className="text-xs font-semibold text-muted-foreground">BRUSH</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground">
+              {showTolerance ? 'COLOR REPLACE' : 'BRUSH'}
+            </h3>
 
             {showBrushSize && (
               <div className="space-y-1">
@@ -136,6 +141,22 @@ export function LeftSidebar() {
                   value={[brushOpacity * 100]}
                   onValueChange={([v]) => setBrushOpacity(v! / 100)}
                   min={1}
+                  max={100}
+                  step={1}
+                />
+              </div>
+            )}
+
+            {showTolerance && (
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <Label className="text-xs">Tolerance</Label>
+                  <span className="text-xs text-muted-foreground">{colorReplaceTolerance}</span>
+                </div>
+                <Slider
+                  value={[colorReplaceTolerance]}
+                  onValueChange={([v]) => setColorReplaceTolerance(v!)}
+                  min={0}
                   max={100}
                   step={1}
                 />

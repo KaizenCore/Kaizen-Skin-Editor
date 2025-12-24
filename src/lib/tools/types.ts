@@ -20,6 +20,8 @@ export interface ToolContext {
   brushSize: number;
   /** Brush opacity (0-1) */
   brushOpacity: number;
+  /** Color replacement tolerance (0-100) */
+  colorReplaceTolerance: number;
   /** Symmetry mode for mirroring strokes */
   symmetryMode: SymmetryMode;
   /** Restricts painting to base or overlay UV regions */

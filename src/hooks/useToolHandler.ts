@@ -49,6 +49,7 @@ export function useToolHandler(options: UseToolHandlerOptions): UseToolHandlerRe
       secondaryColor: store.secondaryColor,
       brushSize: store.brushSize,
       brushOpacity: store.brushOpacity,
+      colorReplaceTolerance: store.colorReplaceTolerance,
       symmetryMode: store.symmetryMode,
       paintTarget: store.paintTarget,
       width: store.document.width,

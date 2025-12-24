@@ -19,8 +19,6 @@ export class ColorReplacementTool extends BaseTool {
   readonly usesBrushOpacity = true;
   readonly usesSymmetry = false;
 
-  private readonly TOLERANCE = 0; // Exact color matching only
-
   onStart(point: Point, context: ToolContext, useSecondary: boolean): ToolResult {
     this.startStroke(point);
 
@@ -52,7 +50,7 @@ export class ColorReplacementTool extends BaseTool {
    * Scans the ENTIRE skin texture, ignoring paintTarget restrictions
    */
   private replaceColor(startPoint: Point, targetColor: RGBA, context: ToolContext): void {
-    const { width, height, imageData } = context;
+    const { width, height, imageData, colorReplaceTolerance } = context;
 
     // Check if start point is valid
     if (!isInBounds(startPoint.x, startPoint.y, width, height)) {
@@ -89,7 +87,7 @@ export class ColorReplacementTool extends BaseTool {
 
         // Check if pixel color matches source color
         const currentColor = this.getPixel(x, y, imageData);
-        if (colorsEqual(currentColor, sourceColor, this.TOLERANCE)) {
+        if (colorsEqual(currentColor, sourceColor, colorReplaceTolerance)) {
           matchingPixels.push({ x, y });
         }
       }

@@ -41,6 +41,7 @@ interface EditorState {
   secondaryColor: RGBA;
   brushSize: number;
   brushOpacity: number;
+  colorReplaceTolerance: number;
   symmetryMode: SymmetryMode;
   selection: Selection | null;
   hoveredPart: string | null;
@@ -66,6 +67,7 @@ interface EditorState {
   swapColors: () => void;
   setBrushSize: (size: number) => void;
   setBrushOpacity: (opacity: number) => void;
+  setColorReplaceTolerance: (tolerance: number) => void;
   setSymmetryMode: (mode: SymmetryMode) => void;
   setSelection: (selection: Selection | null) => void;
   setHoveredPart: (part: string | null) => void;
@@ -133,6 +135,7 @@ export const useEditorStore = create<EditorState>()(
     secondaryColor: [255, 255, 255, 255],
     brushSize: 1,
     brushOpacity: 1,
+    colorReplaceTolerance: 0,
     symmetryMode: 'none',
     selection: null,
     hoveredPart: null,
@@ -199,6 +202,7 @@ export const useEditorStore = create<EditorState>()(
     },
     setBrushSize: (size) => set({ brushSize: Math.max(1, Math.min(64, size)) }),
     setBrushOpacity: (opacity) => set({ brushOpacity: Math.max(0, Math.min(1, opacity)) }),
+    setColorReplaceTolerance: (tolerance) => set({ colorReplaceTolerance: Math.max(0, Math.min(100, tolerance)) }),
     setSymmetryMode: (mode) => set({ symmetryMode: mode }),
     setSelection: (selection) => {
       set({ selection });
