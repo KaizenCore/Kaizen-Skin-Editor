@@ -185,7 +185,7 @@ function Scene({ onPaint, onPaintStart, onPaintEnd, enableRotate, isPainting, bo
 }
 
 // Tools that work in 3D view
-const SUPPORTED_3D_TOOLS = ['pencil', 'eraser', 'eyedropper', 'fill', 'line', 'noise'];
+const SUPPORTED_3D_TOOLS = ['pencil', 'eraser', 'eyedropper', 'fill', 'line', 'noise', 'color-replacement'];
 
 export function Viewer3D() {
   const containerRef = useRef<HTMLDivElement>(null);
