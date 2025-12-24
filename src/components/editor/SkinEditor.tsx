@@ -27,6 +27,44 @@ export function SkinEditor() {
   const [leftLocked, setLeftLocked] = useState(true);
   const [rightLocked, setRightLocked] = useState(true);
 
+  // Hover delay refs (to allow clicking lock button before opening)
+  const leftHoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rightHoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLeftHoverEnter = useCallback(() => {
+    if (leftLocked) return;
+    leftHoverTimeoutRef.current = setTimeout(() => {
+      setLeftCollapsed(false);
+    }, 300);
+  }, [leftLocked]);
+
+  const handleLeftHoverLeave = useCallback(() => {
+    if (leftHoverTimeoutRef.current) {
+      clearTimeout(leftHoverTimeoutRef.current);
+      leftHoverTimeoutRef.current = null;
+    }
+    if (!leftLocked) {
+      setLeftCollapsed(true);
+    }
+  }, [leftLocked]);
+
+  const handleRightHoverEnter = useCallback(() => {
+    if (rightLocked) return;
+    rightHoverTimeoutRef.current = setTimeout(() => {
+      setRightCollapsed(false);
+    }, 300);
+  }, [rightLocked]);
+
+  const handleRightHoverLeave = useCallback(() => {
+    if (rightHoverTimeoutRef.current) {
+      clearTimeout(rightHoverTimeoutRef.current);
+      rightHoverTimeoutRef.current = null;
+    }
+    if (!rightLocked) {
+      setRightCollapsed(true);
+    }
+  }, [rightLocked]);
+
   // Handle mouse move during drag
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || !containerRef.current) return;
@@ -95,8 +133,8 @@ export function SkinEditor() {
           onToggleCollapse={() => setLeftCollapsed(!leftCollapsed)}
           locked={leftLocked}
           onToggleLock={() => setLeftLocked(!leftLocked)}
-          onHoverEnter={() => !leftLocked && setLeftCollapsed(false)}
-          onHoverLeave={() => !leftLocked && setLeftCollapsed(true)}
+          onHoverEnter={handleLeftHoverEnter}
+          onHoverLeave={handleLeftHoverLeave}
         />
 
         {/* Main editor area - Split view */}
@@ -132,8 +170,8 @@ export function SkinEditor() {
           onToggleCollapse={() => setRightCollapsed(!rightCollapsed)}
           locked={rightLocked}
           onToggleLock={() => setRightLocked(!rightLocked)}
-          onHoverEnter={() => !rightLocked && setRightCollapsed(false)}
-          onHoverLeave={() => !rightLocked && setRightCollapsed(true)}
+          onHoverEnter={handleRightHoverEnter}
+          onHoverLeave={handleRightHoverLeave}
         />
       </div>
 
