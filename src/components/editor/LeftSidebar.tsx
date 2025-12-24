@@ -153,7 +153,7 @@ export function LeftSidebar({
                     pressed={activeTool === tool.id}
                     onPressedChange={() => setTool(tool.id)}
                     size="sm"
-                    className={`w-full h-9 ${activeTool === tool.id ? 'bg-primary text-primary-foreground' : ''}`}
+                    className={`w-full h-9 transition-colors duration-200 ${activeTool === tool.id ? 'bg-primary text-primary-foreground' : ''}`}
                   >
                     <tool.icon className="h-4 w-4" />
                   </Toggle>
@@ -253,7 +253,7 @@ export function LeftSidebar({
                     pressed={activeTool === tool.id}
                     onPressedChange={() => setTool(tool.id)}
                     size="sm"
-                    className="w-full h-10"
+                    className={`w-full h-10 transition-colors duration-200 ${activeTool === tool.id ? 'bg-primary text-primary-foreground' : ''}`}
                   >
                     <tool.icon className="h-4 w-4" />
                   </Toggle>
