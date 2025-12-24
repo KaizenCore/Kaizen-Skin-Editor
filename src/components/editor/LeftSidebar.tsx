@@ -14,6 +14,8 @@ import {
   FlipHorizontal,
   FlipVertical,
   Replace,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 import { Button } from '@/components/ui/button';
@@ -42,7 +44,12 @@ const BRUSH_SIZE_TOOLS: ToolId[] = ['pencil', 'eraser', 'line', 'noise'];
 // Tools that use brush opacity
 const BRUSH_OPACITY_TOOLS: ToolId[] = ['pencil', 'eraser', 'fill', 'line', 'gradient', 'noise', 'color-replacement'];
 
-export function LeftSidebar() {
+interface LeftSidebarProps {
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+}
+
+export function LeftSidebar({ collapsed, onToggleCollapse }: LeftSidebarProps) {
   const {
     activeTool,
     setTool,
@@ -81,9 +88,107 @@ export function LeftSidebar() {
     }
   };
 
+  // Collapsed view
+  if (collapsed) {
+    return (
+      <TooltipProvider delayDuration={300}>
+        <div className="w-12 border-r bg-muted/30 flex flex-col h-full overflow-hidden">
+          {/* Expand button */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full h-10 rounded-none"
+                onClick={onToggleCollapse}
+              >
+                <PanelLeftOpen className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Expand sidebar</TooltipContent>
+          </Tooltip>
+
+          <div className="border-b" />
+
+          {/* Tools - compact */}
+          <div className="flex flex-col gap-0.5 p-1">
+            {tools.map((tool) => (
+              <Tooltip key={tool.id}>
+                <TooltipTrigger asChild>
+                  <Toggle
+                    pressed={activeTool === tool.id}
+                    onPressedChange={() => setTool(tool.id)}
+                    size="sm"
+                    className="w-full h-9"
+                  >
+                    <tool.icon className="h-4 w-4" />
+                  </Toggle>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>{tool.label} ({tool.shortcut})</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
+
+          <div className="flex-1" />
+
+          {/* Undo/Redo - compact */}
+          <div className="flex flex-col gap-0.5 p-1 border-t">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-full h-9"
+                  onClick={undo}
+                  disabled={!historyState.canUndo}
+                >
+                  <Undo2 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Undo (Ctrl+Z)</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-full h-9"
+                  onClick={redo}
+                  disabled={!historyState.canRedo}
+                >
+                  <Redo2 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Redo (Ctrl+Y)</TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+      </TooltipProvider>
+    );
+  }
+
   return (
     <TooltipProvider delayDuration={300}>
       <div className="w-[200px] border-r bg-muted/30 flex flex-col h-full overflow-hidden">
+        {/* Collapse button */}
+        <div className="flex justify-end p-1 border-b">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={onToggleCollapse}
+              >
+                <PanelLeftClose className="h-3 w-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Collapse sidebar</TooltipContent>
+          </Tooltip>
+        </div>
+
         {/* Tools Section */}
         <div className="p-3 border-b">
           <h3 className="text-xs font-semibold text-muted-foreground mb-2">TOOLS</h3>

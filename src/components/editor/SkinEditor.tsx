@@ -19,6 +19,10 @@ export function SkinEditor() {
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Sidebar collapsed state
+  const [leftCollapsed, setLeftCollapsed] = useState(false);
+  const [rightCollapsed, setRightCollapsed] = useState(false);
+
   // Handle mouse move during drag
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || !containerRef.current) return;
@@ -82,7 +86,10 @@ export function SkinEditor() {
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar - Tools + Brush Settings */}
-        <LeftSidebar />
+        <LeftSidebar
+          collapsed={leftCollapsed}
+          onToggleCollapse={() => setLeftCollapsed(!leftCollapsed)}
+        />
 
         {/* Main editor area - Split view */}
         <div className="flex-1 flex relative" ref={containerRef}>
@@ -112,7 +119,10 @@ export function SkinEditor() {
         </div>
 
         {/* Right sidebar - Colors + Layers */}
-        <RightSidebar />
+        <RightSidebar
+          collapsed={rightCollapsed}
+          onToggleCollapse={() => setRightCollapsed(!rightCollapsed)}
+        />
       </div>
 
       {/* Status bar */}
