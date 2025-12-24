@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useSearchParams } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { SkinEditor } from '@/components/editor/SkinEditor';
+import { MobileBlocker } from '@/components/MobileBlocker';
 import { useEditorStore } from '@/stores/editorStore';
 import { useAuthStore } from '@/stores/authStore';
 import { OAuthCallback } from '@/components/auth/OAuthCallback';
@@ -112,11 +113,13 @@ function EditorPage() {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden">
-      <OAuthCallback />
-      <OnboardingDialog />
-      <SkinEditor />
-    </div>
+    <MobileBlocker>
+      <div className="h-screen w-screen overflow-hidden">
+        <OAuthCallback />
+        <OnboardingDialog />
+        <SkinEditor />
+      </div>
+    </MobileBlocker>
   );
 }
 
