@@ -13,6 +13,7 @@ import {
   Layers,
   FlipHorizontal,
   FlipVertical,
+  Replace,
 } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 import { Button } from '@/components/ui/button';
@@ -31,6 +32,7 @@ const tools: { id: ToolId; icon: typeof Pencil; label: string; shortcut: string 
   { id: 'line', icon: Minus, label: 'Line', shortcut: 'L' },
   { id: 'gradient', icon: Blend, label: 'Gradient', shortcut: 'D' },
   { id: 'noise', icon: Sparkles, label: 'Noise', shortcut: 'N' },
+  { id: 'color-replacement', icon: Replace, label: 'Color Replace', shortcut: 'R' },
   { id: 'selection', icon: Square, label: 'Selection', shortcut: 'M' },
 ];
 
@@ -38,7 +40,7 @@ const tools: { id: ToolId; icon: typeof Pencil; label: string; shortcut: string 
 const BRUSH_SIZE_TOOLS: ToolId[] = ['pencil', 'eraser', 'line', 'noise'];
 
 // Tools that use brush opacity
-const BRUSH_OPACITY_TOOLS: ToolId[] = ['pencil', 'eraser', 'fill', 'line', 'gradient', 'noise'];
+const BRUSH_OPACITY_TOOLS: ToolId[] = ['pencil', 'eraser', 'fill', 'line', 'gradient', 'noise', 'color-replacement'];
 
 export function LeftSidebar() {
   const {
