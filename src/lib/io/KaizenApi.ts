@@ -238,10 +238,11 @@ export class KaizenApi {
   }
 
   // Badge API methods
+  private static readonly SKIN_API_URL = 'https://skin-api.kaizencore.tech/api/v1';
 
   /** Fetch all available badges */
   static async fetchAllBadges(): Promise<KaizenBadge[]> {
-    const response = await fetch(`${OAUTH_CONFIG.apiUrl}/badges`);
+    const response = await fetch(`${this.SKIN_API_URL}/badges`);
     if (!response.ok) {
       throw new Error(`Failed to fetch badges: ${response.status}`);
     }
@@ -251,7 +252,7 @@ export class KaizenApi {
 
   /** Fetch authenticated user's earned badges */
   static async fetchMyBadges(): Promise<KaizenUserBadge[]> {
-    const response = await this.authenticatedFetch(`${OAUTH_CONFIG.apiUrl}/my/badges`);
+    const response = await this.authenticatedFetch(`${this.SKIN_API_URL}/my/badges`);
     if (!response.ok) {
       throw new Error(`Failed to fetch user badges: ${response.status}`);
     }
@@ -261,7 +262,7 @@ export class KaizenApi {
 
   /** Fetch all badges with earned status for authenticated user */
   static async fetchMyBadgesWithStatus(): Promise<KaizenBadgeWithStatus[]> {
-    const response = await this.authenticatedFetch(`${OAUTH_CONFIG.apiUrl}/my/badges/all`);
+    const response = await this.authenticatedFetch(`${this.SKIN_API_URL}/my/badges/all`);
     if (!response.ok) {
       throw new Error(`Failed to fetch badges with status: ${response.status}`);
     }
@@ -271,7 +272,7 @@ export class KaizenApi {
 
   /** Fetch badges for a specific user (public) */
   static async fetchUserBadges(userId: number): Promise<KaizenUserBadge[]> {
-    const response = await fetch(`${OAUTH_CONFIG.apiUrl}/users/${userId}/badges`);
+    const response = await fetch(`${this.SKIN_API_URL}/users/${userId}/badges`);
     if (!response.ok) {
       throw new Error(`Failed to fetch user badges: ${response.status}`);
     }
