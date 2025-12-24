@@ -1,11 +1,12 @@
 import type { Point, RGBA } from '../../core/types/skin';
 import type { ToolContext, ToolResult } from '../types';
 import { BaseTool } from '../BaseTool';
-import { isValidForPaintTarget, isInBounds } from '../PaintTargetValidator';
+import { isInBounds, isBasePixel, isOverlayPixel } from '../PaintTargetValidator';
 import { colorsEqual } from '../../utils/color';
 
 /**
  * Color Replacement tool - replaces all pixels of a clicked color with another color
+ * across the ENTIRE skin (all body parts, base and overlay).
  * Useful for quickly changing the color of elements like t-shirts, hair, etc.
  */
 export class ColorReplacementTool extends BaseTool {
@@ -40,17 +41,26 @@ export class ColorReplacementTool extends BaseTool {
   }
 
   /**
+   * Check if a pixel is in any valid UV region (base or overlay)
+   */
+  private isValidPixel(x: number, y: number): boolean {
+    return isBasePixel(x, y) || isOverlayPixel(x, y);
+  }
+
+  /**
    * Replace all pixels matching the clicked color with the target color
+   * Scans the ENTIRE skin texture, ignoring paintTarget restrictions
    */
   private replaceColor(startPoint: Point, targetColor: RGBA, context: ToolContext): void {
-    const { width, height, imageData, paintTarget } = context;
+    const { width, height, imageData } = context;
 
     // Check if start point is valid
     if (!isInBounds(startPoint.x, startPoint.y, width, height)) {
       return;
     }
 
-    if (!isValidForPaintTarget(startPoint.x, startPoint.y, paintTarget)) {
+    // Start point must be in a valid UV region
+    if (!this.isValidPixel(startPoint.x, startPoint.y)) {
       return;
     }
 
@@ -62,13 +72,18 @@ export class ColorReplacementTool extends BaseTool {
       return;
     }
 
-    // Scan entire image for matching pixels
+    // Don't replace fully transparent pixels
+    if (sourceColor[3] === 0) {
+      return;
+    }
+
+    // Scan ENTIRE image for matching pixels (both base and overlay regions)
     const matchingPixels: Point[] = [];
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        // Check paint target restriction
-        if (!isValidForPaintTarget(x, y, paintTarget)) {
+        // Only check pixels in valid UV regions (base or overlay)
+        if (!this.isValidPixel(x, y)) {
           continue;
         }
 
