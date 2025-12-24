@@ -3,6 +3,8 @@ import type { SkinModel } from '../core/types';
 export class MojangApi {
   // Using mineatar.io API which provides CORS-friendly access to Minecraft skins
   private static readonly MINEATAR_API = 'https://api.mineatar.io';
+  // Using ashcon.app for username to UUID lookup (CORS-friendly)
+  private static readonly ASHCON_API = 'https://api.ashcon.app/mojang/v2/user';
 
   /** Fetch skin by Minecraft username */
   static async fetchSkinByUsername(username: string): Promise<{
@@ -11,33 +13,31 @@ export class MojangApi {
     uuid: string;
     skinUrl: string;
   }> {
-    // Use mineatar.io API to get player UUID
-    const uuidResponse = await fetch(
-      `${this.MINEATAR_API}/uuid/${encodeURIComponent(username)}`
+    // Use ashcon.app API to get player UUID (CORS-friendly)
+    const profileResponse = await fetch(
+      `${this.ASHCON_API}/${encodeURIComponent(username)}`
     );
 
-    if (!uuidResponse.ok) {
-      if (uuidResponse.status === 404 || uuidResponse.status === 204) {
+    if (!profileResponse.ok) {
+      if (profileResponse.status === 404) {
         throw new Error(`Player "${username}" not found`);
       }
-      throw new Error(`Failed to lookup player: ${uuidResponse.status}`);
+      throw new Error(`Failed to lookup player: ${profileResponse.status}`);
     }
 
-    const uuidData = await uuidResponse.json();
-    const uuid = uuidData.uuid;
+    const profileData = await profileResponse.json();
+    const uuid = profileData.uuid?.replace(/-/g, '');
 
     if (!uuid) {
       throw new Error(`Player "${username}" not found`);
     }
 
+    // Determine model from profile data
+    const model: SkinModel = profileData.textures?.slim ? 'slim' : 'classic';
+
     // Fetch the raw skin image from mineatar.io
     const skinUrl = `${this.MINEATAR_API}/skin/${uuid}`;
     const imageData = await this.fetchSkinImage(skinUrl);
-
-    // Determine model from skin dimensions or default to classic
-    // mineatar returns the raw skin, so we default to classic
-    // In the future, we could check the player's profile for slim/classic
-    const model: SkinModel = 'classic';
 
     return {
       imageData,
