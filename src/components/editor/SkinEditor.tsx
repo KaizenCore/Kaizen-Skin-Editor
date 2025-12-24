@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useEditorStore } from '@/stores/editorStore';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { steveSkinPromise } from '@/lib/core/types';
@@ -12,7 +12,47 @@ import { RightSidebar } from './RightSidebar';
 import '@/lib/tools';
 
 export function SkinEditor() {
-  const { document, newDocument, activeTool } = useEditorStore();
+  const { document: skinDocument, newDocument, activeTool } = useEditorStore();
+
+  // Resizable panel state (percentage for left panel)
+  const [splitPosition, setSplitPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Handle mouse move during drag
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !containerRef.current) return;
+
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = (x / rect.width) * 100;
+
+    // Clamp between 20% and 80%
+    setSplitPosition(Math.max(20, Math.min(80, percentage)));
+  }, [isDragging]);
+
+  // Handle mouse up to stop dragging
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Add/remove event listeners for dragging
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
@@ -20,13 +60,13 @@ export function SkinEditor() {
   // Wait for Steve skin to load, then create default document
   useEffect(() => {
     steveSkinPromise.then(() => {
-      if (!document) {
+      if (!skinDocument) {
         newDocument({ name: 'New Skin', format: 'modern', model: 'classic' });
       }
     });
-  }, [document, newDocument]);
+  }, [skinDocument, newDocument]);
 
-  if (!document) {
+  if (!skinDocument) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-muted-foreground">Loading...</div>
@@ -45,14 +85,28 @@ export function SkinEditor() {
         <LeftSidebar />
 
         {/* Main editor area - Split view */}
-        <div className="flex-1 flex">
+        <div className="flex-1 flex relative" ref={containerRef}>
           {/* 2D Canvas */}
-          <div className="flex-1 border-r">
+          <div
+            className="h-full overflow-hidden"
+            style={{ width: `${splitPosition}%` }}
+          >
             <Canvas2DView />
           </div>
 
+          {/* Resizable divider */}
+          <div
+            className={`w-1 bg-border hover:bg-primary/50 cursor-col-resize transition-colors flex-shrink-0 ${
+              isDragging ? 'bg-primary' : ''
+            }`}
+            onMouseDown={() => setIsDragging(true)}
+          />
+
           {/* 3D Viewer */}
-          <div className="flex-1">
+          <div
+            className="h-full overflow-hidden"
+            style={{ width: `${100 - splitPosition}%` }}
+          >
             <Viewer3D />
           </div>
         </div>
@@ -64,7 +118,7 @@ export function SkinEditor() {
       {/* Status bar */}
       <div className="h-6 px-3 border-t flex items-center text-xs text-muted-foreground bg-muted/30">
         <span>
-          Tool: {activeTool} | Layers: {document.layers.length} | Format: {document.format} | Model: {document.model}
+          Tool: {activeTool} | Layers: {skinDocument.layers.length} | Format: {skinDocument.format} | Model: {skinDocument.model}
         </span>
         <div className="flex-1 text-center text-[10px] opacity-60">
           Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.
