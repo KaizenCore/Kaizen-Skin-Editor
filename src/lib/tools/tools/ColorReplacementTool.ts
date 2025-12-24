@@ -19,7 +19,7 @@ export class ColorReplacementTool extends BaseTool {
   readonly usesBrushOpacity = true;
   readonly usesSymmetry = false;
 
-  private readonly TOLERANCE = 10; // Color matching tolerance
+  private readonly TOLERANCE = 30; // Color matching tolerance (higher = more similar colors matched)
 
   onStart(point: Point, context: ToolContext, useSecondary: boolean): ToolResult {
     this.startStroke(point);
