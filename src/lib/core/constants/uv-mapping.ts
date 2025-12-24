@@ -144,6 +144,49 @@ export const SKIN_UV_MAP: Record<BodyPartName, BodyPartLayerUV> = {
   },
 } as const;
 
+/** UV mapping for slim arms (3x12x4) - uses different pixel regions */
+export const SLIM_ARM_UV_MAP: { rightArm: BodyPartLayerUV; leftArm: BodyPartLayerUV } = {
+  // RIGHT ARM SLIM (3x12x4)
+  rightArm: {
+    base: {
+      top: [44, 16, 47, 20],      // 3 wide
+      bottom: [47, 16, 50, 20],   // 3 wide
+      right: [40, 20, 44, 32],    // 4 deep (same)
+      front: [44, 20, 47, 32],    // 3 wide
+      left: [47, 20, 51, 32],     // 4 deep
+      back: [51, 20, 54, 32],     // 3 wide
+    },
+    overlay: {
+      top: [44, 32, 47, 36],      // 3 wide
+      bottom: [47, 32, 50, 36],   // 3 wide
+      right: [40, 36, 44, 48],    // 4 deep (same)
+      front: [44, 36, 47, 48],    // 3 wide
+      left: [47, 36, 51, 48],     // 4 deep
+      back: [51, 36, 54, 48],     // 3 wide
+    },
+  },
+
+  // LEFT ARM SLIM (3x12x4)
+  leftArm: {
+    base: {
+      top: [36, 48, 39, 52],      // 3 wide
+      bottom: [39, 48, 42, 52],   // 3 wide
+      right: [32, 52, 36, 64],    // 4 deep (same)
+      front: [36, 52, 39, 64],    // 3 wide
+      left: [39, 52, 43, 64],     // 4 deep
+      back: [43, 52, 46, 64],     // 3 wide
+    },
+    overlay: {
+      top: [52, 48, 55, 52],      // 3 wide
+      bottom: [55, 48, 58, 52],   // 3 wide
+      right: [48, 52, 52, 64],    // 4 deep (same)
+      front: [52, 52, 55, 64],    // 3 wide
+      left: [55, 52, 59, 64],     // 4 deep
+      back: [59, 52, 62, 64],     // 3 wide
+    },
+  },
+};
+
 /** Body part 3D dimensions [width, height, depth] */
 export const BODY_PART_DIMENSIONS: Record<
   BodyPartName,

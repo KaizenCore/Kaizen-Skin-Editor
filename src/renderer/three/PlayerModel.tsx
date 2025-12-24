@@ -2,7 +2,7 @@ import { useRef, useMemo, useEffect, useCallback, useState } from 'react';
 import * as THREE from 'three';
 import { ThreeEvent } from '@react-three/fiber';
 import type { SkinModel, Point } from '@/lib/core/types';
-import { SKIN_UV_MAP, BODY_PART_DIMENSIONS, BODY_PART_POSITIONS, OVERLAY_SCALE, type BodyPartUV } from '@/lib/core/constants';
+import { SKIN_UV_MAP, SLIM_ARM_UV_MAP, BODY_PART_DIMENSIONS, BODY_PART_POSITIONS, OVERLAY_SCALE, type BodyPartUV } from '@/lib/core/constants';
 import type { BodyPartVisibility } from '@/stores/editorStore';
 
 interface HoverInfo {
@@ -50,48 +50,38 @@ function createBoxUVs(uvMap: BodyPartUV): Float32Array {
 
   // Three.js BoxGeometry face order: +X, -X, +Y, -Y, +Z, -Z
   // Minecraft skin mapping (player facing +Z toward camera):
-  // +X = player's right side, -X = player's left side
+  // +X = player's LEFT side (from viewer's perspective), -X = player's RIGHT side
   // +Z = player's front (face), -Z = player's back
-  const faceOrder: (keyof BodyPartUV)[] = ['right', 'left', 'top', 'bottom', 'front', 'back'];
+  const faceOrder: (keyof BodyPartUV)[] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
 
-  // Some faces need horizontal mirroring to display correctly
-  const mirrorHorizontal = new Set(['front', 'back']);
-  const mirrorForSides = new Set(['left', 'right']);
+  // Following skinview3d's UV vertex order for correct texture mapping
+  // toFaceVertices creates: [bottom-left, bottom-right, top-right, top-left]
+  // Then reorders to: [top-left, top-right, bottom-left, bottom-right] for most faces
 
   for (const faceName of faceOrder) {
     const [x1, y1, x2, y2] = uvMap[faceName];
 
     // Normalize to 0-1 UV space (64x64 texture)
-    let u1 = x1 / 64;
-    let u2 = x2 / 64;
+    const u1 = x1 / 64;
+    const u2 = x2 / 64;
     const v1 = 1 - y1 / 64; // Top of region (WebGL Y is flipped)
     const v2 = 1 - y2 / 64; // Bottom of region
 
-    // Mirror horizontally for front/back faces so texture appears correct
-    if (mirrorHorizontal.has(faceName)) {
-      [u1, u2] = [u2, u1];
-    }
-
-    // Side faces also need mirroring for correct orientation
-    if (mirrorForSides.has(faceName)) {
-      [u1, u2] = [u2, u1];
-    }
-
-    // BoxGeometry vertex order per face
+    // BoxGeometry vertex order per face - matching skinview3d's approach
     if (faceName === 'top') {
-      // Top face: rotate UV 180 degrees
+      // Top face: [tl, tr, bl, br] with rotation
       uvs.push(u2, v2); // 0
       uvs.push(u1, v2); // 1
       uvs.push(u2, v1); // 2
       uvs.push(u1, v1); // 3
     } else if (faceName === 'bottom') {
-      // Bottom face
-      uvs.push(u2, v1); // 0
-      uvs.push(u1, v1); // 1
-      uvs.push(u2, v2); // 2
-      uvs.push(u1, v2); // 3
+      // Bottom face: different vertex order
+      uvs.push(u1, v2); // 0 - bottom-left
+      uvs.push(u2, v2); // 1 - bottom-right
+      uvs.push(u1, v1); // 2 - top-left
+      uvs.push(u2, v1); // 3 - top-right
     } else {
-      // Side faces (front, back, left, right)
+      // Side faces (front, back, left, right): [tl, tr, bl, br]
       uvs.push(u1, v1); // 0 - top-left
       uvs.push(u2, v1); // 1 - top-right
       uvs.push(u1, v2); // 2 - bottom-left
@@ -530,7 +520,7 @@ export function PlayerModel({
             name="rightArm"
             position={[-6 + (4 - armWidth) / 2, 18, 0]}
             dimensions={[armWidth, 12, 4]}
-            uvMap={SKIN_UV_MAP.rightArm.base}
+            uvMap={model === 'slim' ? SLIM_ARM_UV_MAP.rightArm.base : SKIN_UV_MAP.rightArm.base}
             texture={skinTexture}
             onPaint={onPaint}
             onPaintStart={onPaintStart}
@@ -542,7 +532,7 @@ export function PlayerModel({
             name="rightArm_overlay"
             position={[-6 + (4 - armWidth) / 2, 18, 0]}
             dimensions={[armWidth, 12, 4]}
-            uvMap={SKIN_UV_MAP.rightArm.overlay}
+            uvMap={model === 'slim' ? SLIM_ARM_UV_MAP.rightArm.overlay : SKIN_UV_MAP.rightArm.overlay}
             texture={skinTexture}
             isOverlay
             onPaint={onPaint}
@@ -561,7 +551,7 @@ export function PlayerModel({
             name="leftArm"
             position={[6 - (4 - armWidth) / 2, 18, 0]}
             dimensions={[armWidth, 12, 4]}
-            uvMap={SKIN_UV_MAP.leftArm.base}
+            uvMap={model === 'slim' ? SLIM_ARM_UV_MAP.leftArm.base : SKIN_UV_MAP.leftArm.base}
             texture={skinTexture}
             onPaint={onPaint}
             onPaintStart={onPaintStart}
@@ -573,7 +563,7 @@ export function PlayerModel({
             name="leftArm_overlay"
             position={[6 - (4 - armWidth) / 2, 18, 0]}
             dimensions={[armWidth, 12, 4]}
-            uvMap={SKIN_UV_MAP.leftArm.overlay}
+            uvMap={model === 'slim' ? SLIM_ARM_UV_MAP.leftArm.overlay : SKIN_UV_MAP.leftArm.overlay}
             texture={skinTexture}
             isOverlay
             onPaint={onPaint}
