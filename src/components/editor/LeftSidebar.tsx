@@ -16,6 +16,8 @@ import {
   Replace,
   PanelLeftClose,
   PanelLeftOpen,
+  Lock,
+  LockOpen,
 } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 import { Button } from '@/components/ui/button';
@@ -47,9 +49,20 @@ const BRUSH_OPACITY_TOOLS: ToolId[] = ['pencil', 'eraser', 'fill', 'line', 'grad
 interface LeftSidebarProps {
   collapsed: boolean;
   onToggleCollapse: () => void;
+  locked: boolean;
+  onToggleLock: () => void;
+  onHoverEnter: () => void;
+  onHoverLeave: () => void;
 }
 
-export function LeftSidebar({ collapsed, onToggleCollapse }: LeftSidebarProps) {
+export function LeftSidebar({
+  collapsed,
+  onToggleCollapse,
+  locked,
+  onToggleLock,
+  onHoverEnter,
+  onHoverLeave,
+}: LeftSidebarProps) {
   const {
     activeTool,
     setTool,
@@ -92,21 +105,42 @@ export function LeftSidebar({ collapsed, onToggleCollapse }: LeftSidebarProps) {
   if (collapsed) {
     return (
       <TooltipProvider delayDuration={300}>
-        <div className="w-12 border-r bg-muted/30 flex flex-col h-full overflow-hidden">
-          {/* Expand button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-full h-10 rounded-none"
-                onClick={onToggleCollapse}
-              >
-                <PanelLeftOpen className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">Expand sidebar</TooltipContent>
-          </Tooltip>
+        <div
+          className="w-12 border-r bg-muted/30 flex flex-col h-full overflow-hidden"
+          onMouseEnter={onHoverEnter}
+          onMouseLeave={onHoverLeave}
+        >
+          {/* Expand + Lock buttons */}
+          <div className="flex flex-col gap-0.5 p-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-full h-8"
+                  onClick={onToggleCollapse}
+                >
+                  <PanelLeftOpen className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Expand sidebar</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={locked ? 'default' : 'ghost'}
+                  size="icon"
+                  className="w-full h-8"
+                  onClick={onToggleLock}
+                >
+                  {locked ? <Lock className="h-3 w-3" /> : <LockOpen className="h-3 w-3" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                {locked ? 'Unlock (hover to open)' : 'Lock sidebar'}
+              </TooltipContent>
+            </Tooltip>
+          </div>
 
           <div className="border-b" />
 
@@ -171,9 +205,28 @@ export function LeftSidebar({ collapsed, onToggleCollapse }: LeftSidebarProps) {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="w-[200px] border-r bg-muted/30 flex flex-col h-full overflow-hidden">
-        {/* Collapse button */}
-        <div className="flex justify-end p-1 border-b">
+      <div
+        className="w-[200px] border-r bg-muted/30 flex flex-col h-full overflow-hidden"
+        onMouseEnter={onHoverEnter}
+        onMouseLeave={onHoverLeave}
+      >
+        {/* Collapse + Lock buttons */}
+        <div className="flex justify-end gap-1 p-1 border-b">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={locked ? 'default' : 'ghost'}
+                size="icon"
+                className="h-6 w-6"
+                onClick={onToggleLock}
+              >
+                {locked ? <Lock className="h-3 w-3" /> : <LockOpen className="h-3 w-3" />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              {locked ? 'Unlock (hover to open)' : 'Lock sidebar'}
+            </TooltipContent>
+          </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button

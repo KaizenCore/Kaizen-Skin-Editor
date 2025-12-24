@@ -23,6 +23,10 @@ export function SkinEditor() {
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
 
+  // Sidebar locked state (prevents hover open/close)
+  const [leftLocked, setLeftLocked] = useState(true);
+  const [rightLocked, setRightLocked] = useState(true);
+
   // Handle mouse move during drag
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || !containerRef.current) return;
@@ -89,6 +93,10 @@ export function SkinEditor() {
         <LeftSidebar
           collapsed={leftCollapsed}
           onToggleCollapse={() => setLeftCollapsed(!leftCollapsed)}
+          locked={leftLocked}
+          onToggleLock={() => setLeftLocked(!leftLocked)}
+          onHoverEnter={() => !leftLocked && setLeftCollapsed(false)}
+          onHoverLeave={() => !leftLocked && setLeftCollapsed(true)}
         />
 
         {/* Main editor area - Split view */}
@@ -122,6 +130,10 @@ export function SkinEditor() {
         <RightSidebar
           collapsed={rightCollapsed}
           onToggleCollapse={() => setRightCollapsed(!rightCollapsed)}
+          locked={rightLocked}
+          onToggleLock={() => setRightLocked(!rightLocked)}
+          onHoverEnter={() => !rightLocked && setRightCollapsed(false)}
+          onHoverLeave={() => !rightLocked && setRightCollapsed(true)}
         />
       </div>
 

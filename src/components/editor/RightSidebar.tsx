@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Eye, EyeOff, PanelRightClose, PanelRightOpen, Layers as LayersIcon } from 'lucide-react';
+import { ArrowLeftRight, Eye, EyeOff, PanelRightClose, PanelRightOpen, Layers as LayersIcon, Lock, LockOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -24,9 +24,20 @@ const BODY_PARTS: { id: BodyPartName; label: string }[] = [
 interface RightSidebarProps {
   collapsed: boolean;
   onToggleCollapse: () => void;
+  locked: boolean;
+  onToggleLock: () => void;
+  onHoverEnter: () => void;
+  onHoverLeave: () => void;
 }
 
-export function RightSidebar({ collapsed, onToggleCollapse }: RightSidebarProps) {
+export function RightSidebar({
+  collapsed,
+  onToggleCollapse,
+  locked,
+  onToggleLock,
+  onHoverEnter,
+  onHoverLeave,
+}: RightSidebarProps) {
   const {
     primaryColor,
     secondaryColor,
@@ -44,21 +55,42 @@ export function RightSidebar({ collapsed, onToggleCollapse }: RightSidebarProps)
   if (collapsed) {
     return (
       <TooltipProvider delayDuration={300}>
-        <div className="w-12 border-l bg-muted/30 flex flex-col h-full overflow-hidden">
-          {/* Expand button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-full h-10 rounded-none"
-                onClick={onToggleCollapse}
-              >
-                <PanelRightOpen className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">Expand sidebar</TooltipContent>
-          </Tooltip>
+        <div
+          className="w-12 border-l bg-muted/30 flex flex-col h-full overflow-hidden"
+          onMouseEnter={onHoverEnter}
+          onMouseLeave={onHoverLeave}
+        >
+          {/* Expand + Lock buttons */}
+          <div className="flex flex-col gap-0.5 p-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-full h-8"
+                  onClick={onToggleCollapse}
+                >
+                  <PanelRightOpen className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">Expand sidebar</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={locked ? 'default' : 'ghost'}
+                  size="icon"
+                  className="w-full h-8"
+                  onClick={onToggleLock}
+                >
+                  {locked ? <Lock className="h-3 w-3" /> : <LockOpen className="h-3 w-3" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                {locked ? 'Unlock (hover to open)' : 'Lock sidebar'}
+              </TooltipContent>
+            </Tooltip>
+          </div>
 
           <div className="border-b" />
 
@@ -173,9 +205,13 @@ export function RightSidebar({ collapsed, onToggleCollapse }: RightSidebarProps)
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="w-[280px] border-l bg-muted/30 flex flex-col h-full overflow-hidden">
-        {/* Collapse button */}
-        <div className="flex justify-start p-1 border-b">
+      <div
+        className="w-[280px] border-l bg-muted/30 flex flex-col h-full overflow-hidden"
+        onMouseEnter={onHoverEnter}
+        onMouseLeave={onHoverLeave}
+      >
+        {/* Collapse + Lock buttons */}
+        <div className="flex justify-start gap-1 p-1 border-b">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -188,6 +224,21 @@ export function RightSidebar({ collapsed, onToggleCollapse }: RightSidebarProps)
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">Collapse sidebar</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={locked ? 'default' : 'ghost'}
+                size="icon"
+                className="h-6 w-6"
+                onClick={onToggleLock}
+              >
+                {locked ? <Lock className="h-3 w-3" /> : <LockOpen className="h-3 w-3" />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              {locked ? 'Unlock (hover to open)' : 'Lock sidebar'}
+            </TooltipContent>
           </Tooltip>
         </div>
 
