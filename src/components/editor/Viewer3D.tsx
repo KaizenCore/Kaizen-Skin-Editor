@@ -267,6 +267,23 @@ export function Viewer3D() {
     lastPointRef.current = null;
   }, [handleEnd]);
 
+  // Global pointer up listener to catch mouse release anywhere (even outside canvas)
+  useEffect(() => {
+    const handleGlobalPointerUp = () => {
+      if (isPaintingRef.current) {
+        handlePaintEnd();
+      }
+    };
+
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    window.addEventListener('pointercancel', handleGlobalPointerUp);
+
+    return () => {
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+      window.removeEventListener('pointercancel', handleGlobalPointerUp);
+    };
+  }, [handlePaintEnd]);
+
   // Handle 3D painting (single point from raycasting)
   const handlePaint = useCallback(
     (point: Point) => {
