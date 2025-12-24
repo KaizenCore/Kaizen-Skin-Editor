@@ -8,10 +8,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { User, LogOut, Loader2, Gamepad2, Shield } from 'lucide-react';
+import { User, LogOut, Loader2, Gamepad2, Shield, Award } from 'lucide-react';
+import { BadgeList } from '@/components/badges/BadgeDisplay';
 
 export function UserMenu() {
-  const { user, minecraftProfile, isAuthenticated, isLoading, login, logout } = useAuthStore();
+  const { user, minecraftProfile, badges, isAuthenticated, isLoading, login, logout } = useAuthStore();
 
   // Loading state
   if (isLoading) {
@@ -93,6 +94,19 @@ export function UserMenu() {
                   {tag.name}
                 </span>
               ))}
+            </div>
+          </>
+        )}
+
+        {badges.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <div className="px-2 py-1.5">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1.5">
+                <Award className="h-3 w-3" />
+                <span>Badges</span>
+              </div>
+              <BadgeList badges={badges} size="sm" maxDisplay={6} />
             </div>
           </>
         )}

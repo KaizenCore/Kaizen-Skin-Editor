@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Pencil,
   Eraser,
@@ -11,12 +12,14 @@ import {
   FlipHorizontal,
   FlipVertical,
   Replace,
+  Award,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { useEditorStore } from '@/stores/editorStore';
+import { BadgesModal } from '@/components/badges/BadgesModal';
 import type { ToolId, SymmetryMode } from '@/lib/core/types';
 
 const tools: { id: ToolId; icon: typeof Pencil; label: string; shortcut: string }[] = [
@@ -29,6 +32,7 @@ const tools: { id: ToolId; icon: typeof Pencil; label: string; shortcut: string 
 ];
 
 export function Toolbar() {
+  const [showBadgesModal, setShowBadgesModal] = useState(false);
   const {
     activeTool,
     setTool,
@@ -147,6 +151,25 @@ export function Toolbar() {
 
         <div className="flex-1" />
 
+        {/* Badges */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-10 h-10"
+              onClick={() => setShowBadgesModal(true)}
+            >
+              <Award className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>Badges</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Separator className="my-2 w-8" />
+
         {/* Undo/Redo */}
         <div className="flex flex-col gap-1">
           <Tooltip>
@@ -190,6 +213,8 @@ export function Toolbar() {
           </Tooltip>
         </div>
       </div>
+
+      <BadgesModal open={showBadgesModal} onOpenChange={setShowBadgesModal} />
     </TooltipProvider>
   );
 }

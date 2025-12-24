@@ -7,6 +7,7 @@ import { useEditorStore } from '@/stores/editorStore';
 import { useAuthStore } from '@/stores/authStore';
 import { OAuthCallback } from '@/components/auth/OAuthCallback';
 import { OnboardingDialog } from '@/components/dialogs/OnboardingDialog';
+import { NewBadgeModal } from '@/components/badges/NewBadgeModal';
 import { TermsOfService } from '@/pages/TermsOfService';
 import { PrivacyPolicy } from '@/pages/PrivacyPolicy';
 import { toast } from '@/lib/toast';
@@ -14,7 +15,7 @@ import type { SkinFormat } from '@/lib/core/types';
 
 function EditorPage() {
   const { document, newDocument, loadSkin } = useEditorStore();
-  const { initialize } = useAuthStore();
+  const { initialize, newBadge, clearNewBadge } = useAuthStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoadingUserSkin, setIsLoadingUserSkin] = useState(false);
   const [userSkinError, setUserSkinError] = useState<string | null>(null);
@@ -117,6 +118,7 @@ function EditorPage() {
       <div className="h-screen w-screen overflow-hidden">
         <OAuthCallback />
         <OnboardingDialog />
+        <NewBadgeModal badge={newBadge} onClose={clearNewBadge} />
         <SkinEditor />
       </div>
     </MobileBlocker>

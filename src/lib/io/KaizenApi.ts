@@ -27,6 +27,26 @@ export interface KaizenMinecraftProfile {
   avatarUrl: string;
 }
 
+// Badge types
+export interface KaizenBadge {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  type: 'achievement' | 'milestone' | 'special';
+  requirement_count?: number;
+}
+
+export interface KaizenUserBadge extends KaizenBadge {
+  earned_at: string;
+}
+
+export interface KaizenBadgeWithStatus extends KaizenBadge {
+  is_earned: boolean;
+}
+
 export interface KaizenTokens {
   access_token: string;
   refresh_token?: string;
@@ -215,6 +235,48 @@ export class KaizenApi {
   /** Get current access token */
   static getAccessToken(): string | null {
     return this.accessToken;
+  }
+
+  // Badge API methods
+
+  /** Fetch all available badges */
+  static async fetchAllBadges(): Promise<KaizenBadge[]> {
+    const response = await fetch(`${OAUTH_CONFIG.apiUrl}/badges`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch badges: ${response.status}`);
+    }
+    const json = await response.json();
+    return json.data || json;
+  }
+
+  /** Fetch authenticated user's earned badges */
+  static async fetchMyBadges(): Promise<KaizenUserBadge[]> {
+    const response = await this.authenticatedFetch(`${OAUTH_CONFIG.apiUrl}/my/badges`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user badges: ${response.status}`);
+    }
+    const json = await response.json();
+    return json.data || json;
+  }
+
+  /** Fetch all badges with earned status for authenticated user */
+  static async fetchMyBadgesWithStatus(): Promise<KaizenBadgeWithStatus[]> {
+    const response = await this.authenticatedFetch(`${OAUTH_CONFIG.apiUrl}/my/badges/all`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch badges with status: ${response.status}`);
+    }
+    const json = await response.json();
+    return json.data || json;
+  }
+
+  /** Fetch badges for a specific user (public) */
+  static async fetchUserBadges(userId: number): Promise<KaizenUserBadge[]> {
+    const response = await fetch(`${OAUTH_CONFIG.apiUrl}/users/${userId}/badges`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user badges: ${response.status}`);
+    }
+    const json = await response.json();
+    return json.data || json;
   }
 
   // Private helpers

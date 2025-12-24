@@ -4,6 +4,7 @@ import {
   KaizenApi,
   type KaizenUser,
   type KaizenMinecraftProfile,
+  type KaizenUserBadge,
 } from '@/lib/io/KaizenApi';
 import { toast } from '@/lib/toast';
 
@@ -22,6 +23,8 @@ interface AuthState {
   // State
   user: KaizenUser | null;
   minecraftProfile: KaizenMinecraftProfile | null;
+  badges: KaizenUserBadge[];
+  newBadge: KaizenUserBadge | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -32,13 +35,18 @@ interface AuthState {
   handleCallback: (code: string, state: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
+  fetchBadges: () => Promise<void>;
+  showNewBadge: (badge: KaizenUserBadge) => void;
+  clearNewBadge: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
-  subscribeWithSelector((set) => ({
+  subscribeWithSelector((set, get) => ({
     // Initial state
     user: null,
     minecraftProfile: null,
+    badges: [],
+    newBadge: null,
     isAuthenticated: false,
     isLoading: false,
     error: null,
@@ -51,6 +59,11 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated,
         minecraftProfile: extractMinecraftProfile(user),
       });
+
+      // Fetch badges if authenticated
+      if (isAuthenticated) {
+        get().fetchBadges();
+      }
     },
 
     // Start OAuth login flow
@@ -88,6 +101,9 @@ export const useAuthStore = create<AuthState>()(
           minecraftProfile: extractMinecraftProfile(user),
         });
 
+        // Fetch badges after login
+        get().fetchBadges();
+
         toast.success('Logged in', `Welcome back, ${user.name}!`);
       } catch (error) {
         console.error('Login error:', error);
@@ -123,5 +139,23 @@ export const useAuthStore = create<AuthState>()(
 
     // Clear error
     clearError: () => set({ error: null }),
+
+    // Fetch user badges
+    fetchBadges: async () => {
+      if (!get().isAuthenticated) return;
+
+      try {
+        const badges = await KaizenApi.fetchMyBadges();
+        set({ badges });
+      } catch (error) {
+        console.error('Failed to fetch badges:', error);
+      }
+    },
+
+    // Show new badge notification
+    showNewBadge: (badge: KaizenUserBadge) => set({ newBadge: badge }),
+
+    // Clear new badge notification
+    clearNewBadge: () => set({ newBadge: null }),
   }))
 );
