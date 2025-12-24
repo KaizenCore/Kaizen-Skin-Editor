@@ -69,11 +69,11 @@ function createBoxUVs(uvMap: BodyPartUV): Float32Array {
 
     // BoxGeometry vertex order per face - matching skinview3d's approach
     if (faceName === 'top') {
-      // Top face: [tl, tr, bl, br] with rotation
-      uvs.push(u2, v2); // 0
-      uvs.push(u1, v2); // 1
-      uvs.push(u2, v1); // 2
-      uvs.push(u1, v1); // 3
+      // Top face: rotated 180° to match Minecraft convention
+      uvs.push(u1, v1); // 0 - top-left
+      uvs.push(u2, v1); // 1 - top-right
+      uvs.push(u1, v2); // 2 - bottom-left
+      uvs.push(u2, v2); // 3 - bottom-right
     } else if (faceName === 'bottom') {
       // Bottom face: different vertex order
       uvs.push(u1, v2); // 0 - bottom-left
