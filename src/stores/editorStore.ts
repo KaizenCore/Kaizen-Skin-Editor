@@ -59,6 +59,8 @@ interface EditorState {
   // Actions
   newDocument: (options?: { name?: string; format?: SkinFormat; model?: SkinModel }) => void;
   loadSkin: (imageData: ImageData, format: SkinFormat, model: SkinModel, name?: string, sourceSkin?: Skin) => void;
+  loadFromDocument: (doc: SkinDocument) => void;
+  getCompositeImageData: () => ImageData | null;
   setSourceSkin: (skin: Skin | null) => void;
   clearSourceSkin: () => void;
   setTool: (toolId: ToolId) => void;
@@ -187,6 +189,24 @@ export const useEditorStore = create<EditorState>()(
 
       get().updateComposite();
       get().syncManager.emitImmediate({ type: 'full-update' });
+    },
+
+    loadFromDocument: (doc) => {
+      const { historyManager } = get();
+      historyManager.clear();
+
+      set({
+        document: doc,
+        sourceSkin: null,
+        historyState: historyManager.getState(),
+      });
+
+      get().updateComposite();
+      get().syncManager.emitImmediate({ type: 'full-update' });
+    },
+
+    getCompositeImageData: () => {
+      return get().compositeImageData;
     },
 
     setSourceSkin: (skin) => set({ sourceSkin: skin }),

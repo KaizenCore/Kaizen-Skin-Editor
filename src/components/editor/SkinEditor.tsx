@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useEditorStore } from '@/stores/editorStore';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useKeyboardShortcuts, useAutoSave } from '@/hooks';
 import { steveSkinPromise } from '@/lib/core/types';
 import { MenuBar } from './MenuBar';
 import { Canvas2DView } from './Canvas2DView';
@@ -102,6 +102,9 @@ export function SkinEditor() {
 
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
+
+  // Initialize auto-save for local library
+  useAutoSave();
 
   // Wait for Steve skin to load, then create default document
   useEffect(() => {

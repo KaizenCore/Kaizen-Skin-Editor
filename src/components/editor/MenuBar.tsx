@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FilePlus,
   FolderOpen,
   Download,
   Upload,
+  Save,
   Undo2,
   Redo2,
   Grid3X3,
@@ -31,21 +32,49 @@ import {
 import { useEditorStore } from '@/stores/editorStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useThemeStore, themes } from '@/stores/themeStore';
+import { useLocalLibraryStore } from '@/stores/localLibraryStore';
+import { toast } from '@/lib/toast';
 import { ImportDialog } from '@/components/dialogs/ImportDialog';
 import { ExportDialog } from '@/components/dialogs/ExportDialog';
 import { UploadDialog } from '@/components/dialogs/UploadDialog';
 import { GalleryDialog } from '@/components/dialogs/GalleryDialog';
 import { UserMenu } from '@/components/auth/UserMenu';
+import { setKeyboardCallbacks } from '@/hooks/useKeyboardShortcuts';
 
 export function MenuBar() {
   const { newDocument, document, loadSkin, undo, redo, historyState, showGrid, setShowGrid, showOverlay, setShowOverlay } = useEditorStore();
   const { minecraftProfile } = useAuthStore();
   const { currentThemeId, isDarkMode, setTheme, toggleDarkMode } = useThemeStore();
+  const { saveCurrent, isInitialized: localLibraryReady } = useLocalLibraryStore();
   const [importOpen, setImportOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [isLoadingMcSkin, setIsLoadingMcSkin] = useState(false);
+  const [isSavingLocal, setIsSavingLocal] = useState(false);
+
+  // Register keyboard shortcuts callbacks
+  useEffect(() => {
+    setKeyboardCallbacks({
+      onExport: () => setExportOpen(true),
+    });
+  }, []);
+
+  // Save to local library
+  const handleSaveLocal = async () => {
+    if (!document || isSavingLocal || !localLibraryReady) return;
+
+    setIsSavingLocal(true);
+    try {
+      await saveCurrent();
+      toast.success('Saved', 'Skin saved to local library');
+    } catch (err) {
+      console.error('Save failed:', err);
+      toast.error('Save failed', 'Could not save to local library');
+    } finally {
+      setIsSavingLocal(false);
+    }
+  };
 
   // Load user's Minecraft skin from external API
   const handleLoadMinecraftSkin = async () => {
@@ -124,10 +153,19 @@ export function MenuBar() {
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSaveLocal} disabled={isSavingLocal || !localLibraryReady}>
+                {isSavingLocal ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="mr-2 h-4 w-4" />
+                )}
+                Save Local
+                <DropdownMenuShortcut>Ctrl+S</DropdownMenuShortcut>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setExportOpen(true)}>
                 <Download className="mr-2 h-4 w-4" />
                 Export...
-                <DropdownMenuShortcut>Ctrl+S</DropdownMenuShortcut>
+                <DropdownMenuShortcut>Ctrl+E</DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setUploadOpen(true)}>
                 <Upload className="mr-2 h-4 w-4" />
@@ -173,6 +211,14 @@ export function MenuBar() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Gallery Button */}
+          <button
+            onClick={() => setGalleryOpen(true)}
+            className="px-3 py-1 text-sm hover:bg-accent rounded-sm focus:outline-none"
+          >
+            Gallery
+          </button>
 
           {/* Theme Menu */}
           <DropdownMenu>

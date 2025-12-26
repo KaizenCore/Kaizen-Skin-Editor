@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Download, Loader2, Heart, Globe, User, Search, RefreshCw, Pencil } from 'lucide-react';
+import { Download, Loader2, Heart, Globe, User, Search, RefreshCw, Pencil, HardDrive } from 'lucide-react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -14,6 +14,7 @@ import { useEditorStore } from '@/stores/editorStore';
 import { useAuthStore } from '@/stores/authStore';
 import { SkinApi, type Skin } from '@/lib/io/SkinApi';
 import { EditSkinDialog } from './EditSkinDialog';
+import { LocalLibraryTab } from './LocalLibraryTab';
 import { toast } from '@/lib/toast';
 
 interface GalleryDialogProps {
@@ -21,7 +22,7 @@ interface GalleryDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-type Tab = 'gallery' | 'my-skins';
+type Tab = 'gallery' | 'my-skins' | 'local';
 
 export function GalleryDialog({ open, onOpenChange }: GalleryDialogProps) {
   const { loadSkin } = useEditorStore();
@@ -37,6 +38,8 @@ export function GalleryDialog({ open, onOpenChange }: GalleryDialogProps) {
 
   // Fetch skins based on current tab
   const fetchSkins = useCallback(async () => {
+    if (tab === 'local') return; // Local tab handles its own data
+
     setIsLoading(true);
     setError(null);
 
@@ -67,7 +70,7 @@ export function GalleryDialog({ open, onOpenChange }: GalleryDialogProps) {
 
   // Fetch on open and tab change
   useEffect(() => {
-    if (open) {
+    if (open && tab !== 'local') {
       fetchSkins();
     }
   }, [open, tab, fetchSkins]);
@@ -115,92 +118,111 @@ export function GalleryDialog({ open, onOpenChange }: GalleryDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[80vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle>Skin Gallery</DialogTitle>
-          <DialogDescription>
-            Browse and load skins from the community
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="right" className="w-[75vw] sm:max-w-[75vw] flex flex-col p-0">
+          <SheetHeader className="px-6 pt-6 pb-4 border-b">
+            <SheetTitle className="text-xl">Skin Gallery</SheetTitle>
+            <SheetDescription>
+              Browse and load skins from the community, your collection, or local storage
+            </SheetDescription>
+          </SheetHeader>
 
-        {/* Tabs */}
-        <div className="flex gap-2 border-b pb-2">
-          <Button
-            variant={tab === 'gallery' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setTab('gallery')}
-            className="gap-2"
-          >
-            <Globe className="h-4 w-4" />
-            Public Gallery
-          </Button>
-          {isAuthenticated && (
-            <Button
-              variant={tab === 'my-skins' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setTab('my-skins')}
-              className="gap-2"
-            >
-              <User className="h-4 w-4" />
-              My Skins
-            </Button>
-          )}
-        </div>
-
-        {/* Search (only for gallery) */}
-        {tab === 'gallery' && (
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search skins..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-            <Button variant="outline" size="icon" onClick={fetchSkins}>
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </Button>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-            {error}
-          </div>
-        )}
-
-        {/* Skins Grid */}
-        <ScrollArea className="flex-1 min-h-0">
-          {isLoading && skins.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            </div>
-          ) : skins.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p>No skins found</p>
-              {tab === 'my-skins' && (
-                <p className="text-sm">Upload your first skin to see it here!</p>
+          <div className="flex flex-col flex-1 overflow-hidden px-6 py-4 gap-4">
+            {/* Tabs */}
+            <div className="flex gap-2 border-b pb-3">
+              <Button
+                variant={tab === 'gallery' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setTab('gallery')}
+                className="gap-2"
+              >
+                <Globe className="h-4 w-4" />
+                Public Gallery
+              </Button>
+              {isAuthenticated && (
+                <Button
+                  variant={tab === 'my-skins' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setTab('my-skins')}
+                  className="gap-2"
+                >
+                  <User className="h-4 w-4" />
+                  My Skins
+                </Button>
               )}
+              <Button
+                variant={tab === 'local' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setTab('local')}
+                className="gap-2"
+              >
+                <HardDrive className="h-4 w-4" />
+                Local
+              </Button>
             </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-              {skins.map((skin) => (
-                <SkinCard
-                  key={skin.id}
-                  skin={skin}
-                  onLoad={() => handleLoadSkin(skin)}
-                  onEdit={skin.is_owner ? () => setEditingSkin(skin) : undefined}
-                  isLoading={loadingSkinId === skin.id}
-                />
-              ))}
-            </div>
-          )}
-        </ScrollArea>
-      </DialogContent>
+
+            {/* Search (only for gallery) */}
+            {tab === 'gallery' && (
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search skins..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Button variant="outline" size="icon" onClick={fetchSkins}>
+                  <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                </Button>
+              </div>
+            )}
+
+            {/* Error */}
+            {error && tab !== 'local' && (
+              <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+                {error}
+              </div>
+            )}
+
+            {/* Content */}
+            {tab === 'local' ? (
+              <div className="flex-1 overflow-hidden">
+                <LocalLibraryTab onLoadSkin={() => onOpenChange(false)} />
+              </div>
+            ) : (
+              <ScrollArea className="flex-1">
+                {isLoading && skins.length === 0 ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : skins.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                    <p>No skins found</p>
+                    {tab === 'my-skins' && (
+                      <p className="text-sm">Upload your first skin to see it here!</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-1">
+                    {skins.map((skin) => (
+                      <SkinCard
+                        key={skin.id}
+                        skin={skin}
+                        onLoad={() => handleLoadSkin(skin)}
+                        onEdit={skin.is_owner ? () => setEditingSkin(skin) : undefined}
+                        isLoading={loadingSkinId === skin.id}
+                      />
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Edit Skin Dialog */}
       <EditSkinDialog
@@ -218,7 +240,7 @@ export function GalleryDialog({ open, onOpenChange }: GalleryDialogProps) {
           fetchSkins();
         }}
       />
-    </Dialog>
+    </>
   );
 }
 
