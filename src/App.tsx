@@ -15,14 +15,16 @@ import type { SkinFormat } from '@/lib/core/types';
 
 function EditorPage() {
   const { document, newDocument, loadSkin } = useEditorStore();
-  const { initialize, newBadge, clearNewBadge } = useAuthStore();
+  const { initialize, newBadge, clearNewBadge, isAuthenticated, user } = useAuthStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoadingUserSkin, setIsLoadingUserSkin] = useState(false);
   const [userSkinError, setUserSkinError] = useState<string | null>(null);
+  const [authInitialized, setAuthInitialized] = useState(false);
 
   // Initialize auth on mount
   useEffect(() => {
     initialize();
+    setAuthInitialized(true);
   }, [initialize]);
 
   // Load skin from URL parameter using mc-heads.net (CORS-friendly)
@@ -71,24 +73,32 @@ function EditorPage() {
     }
   }, [loadSkin, newDocument, searchParams, setSearchParams]);
 
-  // Initialize document on mount or load from URL parameter
+  // Initialize document on mount or load from URL parameter or logged-in user's skin
   useEffect(() => {
+    // Wait for auth to initialize before deciding what to load
+    if (!authInitialized) return;
+
     const userParam = searchParams.get('user');
 
     if (userParam && !document) {
+      // URL parameter takes priority
       loadSkinFromUsername(userParam);
+    } else if (!document && isAuthenticated && user?.minecraft_username) {
+      // Load logged-in user's skin if they have a Minecraft account linked
+      loadSkinFromUsername(user.minecraft_username);
     } else if (!document) {
       newDocument({ name: 'New Skin', format: 'modern', model: 'classic' });
     }
-  }, [document, newDocument, searchParams, loadSkinFromUsername]);
+  }, [document, newDocument, searchParams, loadSkinFromUsername, authInitialized, isAuthenticated, user]);
 
   // Show loading state
   if (isLoadingUserSkin) {
+    const loadingUsername = searchParams.get('user') || user?.minecraft_username || 'user';
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading skin for {searchParams.get('user')}...</p>
+          <p className="text-muted-foreground">Loading skin for {loadingUsername}...</p>
         </div>
       </div>
     );
