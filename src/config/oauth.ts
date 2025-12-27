@@ -17,5 +17,5 @@ export const OAUTH_CONFIG = {
   },
 
   // Scopes needed for skin editor
-  scopes: ['user:read', 'user:profile', 'minecraft:verify', 'skin:read', 'skin:write'],
+  scopes: ['user:read', 'user:profile', 'minecraft:verify', 'skins:read', 'skins:write'],
 } as const;
