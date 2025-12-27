@@ -23,7 +23,7 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://api.mojang.com https://sessionserver.mojang.com https://textures.minecraft.net https://skin-api.kaizencore.tech https://api.kaizencore.tech https://crafatar.com; frame-ancestors 'self' https://skin-api.kaizencore.tech"
     }
   },
   "bundle": {

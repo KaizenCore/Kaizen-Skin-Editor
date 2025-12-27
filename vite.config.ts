@@ -16,6 +16,16 @@ export default defineConfig({
     watch: {
       ignored: ['**/src-tauri/**'],
     },
+    headers: {
+      'Content-Security-Policy': "frame-ancestors 'self' https://skin-api.kaizencore.tech",
+      'X-Frame-Options': 'ALLOW-FROM https://skin-api.kaizencore.tech',
+    },
+  },
+  preview: {
+    headers: {
+      'Content-Security-Policy': "frame-ancestors 'self' https://skin-api.kaizencore.tech",
+      'X-Frame-Options': 'ALLOW-FROM https://skin-api.kaizencore.tech',
+    },
   },
   build: {
     target: 'esnext',
