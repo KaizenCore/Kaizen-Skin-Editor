@@ -161,6 +161,11 @@ export function useToolHandler(options: UseToolHandlerOptions): UseToolHandlerRe
       useEditorStore.getState().setPrimaryColor(result.pickedColor);
     }
 
+    // Handle selection tool result
+    if (result.selection !== undefined) {
+      useEditorStore.getState().setSelection(result.selection);
+    }
+
     activeToolRef.current = null;
     return result;
   }, [getContext]);

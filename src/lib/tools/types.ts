@@ -1,4 +1,4 @@
-import type { Point, RGBA, Pixel, SymmetryMode, ToolId } from '../core/types/skin';
+import type { Point, RGBA, Pixel, SymmetryMode, ToolId, Selection } from '../core/types/skin';
 
 /** Paint target for restricting painting to base or overlay UV regions */
 export type PaintTarget = 'base' | 'overlay';
@@ -47,6 +47,8 @@ export interface ToolResult {
   pickedColor?: RGBA;
   /** Optional: preview pixels to render (for line, gradient preview) */
   previewPixels?: Pixel[];
+  /** Optional: selection created by selection tool */
+  selection?: Selection | null;
 }
 
 /** Tool state during multi-step operations (e.g., line drawing) */

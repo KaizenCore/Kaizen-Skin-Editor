@@ -1,4 +1,4 @@
-import type { Point, Pixel, Rect } from '../../core/types/skin';
+import type { Point, Pixel, Rect, Selection } from '../../core/types/skin';
 import type { ToolContext, ToolResult } from '../types';
 import { BaseTool } from '../BaseTool';
 
@@ -57,11 +57,24 @@ export class SelectionTool extends BaseTool {
   onEnd(point: Point, _context: ToolContext): ToolResult {
     if (!this.state.isActive || !this.state.startPoint) {
       this.endStroke();
-      return this.createResult(true);
+      return {
+        ...this.createResult(true),
+        selection: null,
+      };
     }
 
     // Finalize selection bounds
     this.selectionBounds = this.calculateBounds(this.state.startPoint, point);
+
+    // Create selection object to return
+    const selection: Selection | null = this.selectionBounds &&
+      this.selectionBounds.width > 0 &&
+      this.selectionBounds.height > 0
+        ? {
+            type: 'rectangle',
+            bounds: { ...this.selectionBounds },
+          }
+        : null;
 
     this.endStroke();
 
@@ -70,6 +83,7 @@ export class SelectionTool extends BaseTool {
       originalPixels: [],
       isComplete: true,
       previewPixels: this.getSelectionPreview(),
+      selection,
     };
   }
 
